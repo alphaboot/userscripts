@@ -10,6 +10,7 @@
 // @grant        GM_xmlhttpRequest
 // @grant        GM_addStyle
 // @connect      store.steampowered.com
+// @updateURL    https://github.com/alphaboot/userscripts/raw/main/sh_curation_fetcher.user.js
 // ==/UserScript==
 
 (function() {
