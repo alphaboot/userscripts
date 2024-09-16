@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         [SH] AScouts Curation Fetcher
 // @namespace    http://tampermonkey.net/
-// @version      2.0
+// @version      2.1
 // @description  Display curations on SteamHunters
 // @author       alphabetsoup
 // @match        https://steamhunters.com/apps/*
