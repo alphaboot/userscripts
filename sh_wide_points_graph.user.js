@@ -5,8 +5,8 @@
 // @author       alphabetsoup
 // @match        https://steamhunters.com/id/*/stats
 // @match        https://steamhunters.com/profiles/*/stats
-// @updateURL    https://raw.githubusercontent.com/alphaboot/userscripts/main/sh_curation_fetcher.user.js
-// @downloadURL  https://raw.githubusercontent.com/alphaboot/userscripts/main/sh_curation_fetcher.user.js
+// @updateURL    https://raw.githubusercontent.com/alphaboot/userscripts/main/sh_wide_points_graph.user.js
+// @downloadURL  https://raw.githubusercontent.com/alphaboot/userscripts/main/sh_wide_points_graph.user.js
 // ==/UserScript==
 
 document.getElementById('pointCanvas').parentElement.style.width = '100%';
