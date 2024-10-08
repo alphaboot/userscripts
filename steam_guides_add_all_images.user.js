@@ -5,8 +5,8 @@
 // @author       alphabetsoup
 // @match        https://steamcommunity.com/sharedfiles/editguidesubsection/*
 // @grant        none
-// @updateURL    https://raw.githubusercontent.com/alphaboot/userscripts/main/steam_guides_add_all_images.js
-// @downloadURL  https://raw.githubusercontent.com/alphaboot/userscripts/main/steam_guides_add_all_images.js
+// @updateURL    https://raw.githubusercontent.com/alphaboot/userscripts/main/steam_guides_add_all_images.user.js
+// @downloadURL  https://raw.githubusercontent.com/alphaboot/userscripts/main/steam_guides_add_all_images.user.js
 // ==/UserScript==
 
 (function() {
