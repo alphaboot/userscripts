@@ -1,10 +1,12 @@
 // ==UserScript==
 // @name         [Steam] Add All Images in Guides
-// @version      1.9
+// @version      2.0
 // @description  Adds a button that generates the bbcode for all uploaded images
 // @author       alphabetsoup
 // @match        https://steamcommunity.com/sharedfiles/editguidesubsection/*
 // @grant        none
+// @updateURL    https://raw.githubusercontent.com/alphaboot/userscripts/main/steam_guides_add_all_images.js
+// @downloadURL  https://raw.githubusercontent.com/alphaboot/userscripts/main/steam_guides_add_all_images.js
 // ==/UserScript==
 
 (function() {
