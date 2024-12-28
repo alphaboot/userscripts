@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         [SH] AScouts Curation Fetcher
-// @version      2.4
+// @version      2.5
 // @description  Display curations on SteamHunters
 // @author       alphabetsoup
 // @match        https://steamhunters.com/apps/*
@@ -31,6 +31,10 @@
 
     let curatorDetailFound = false;
     let container;
+
+    GM_addStyle(`
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
+    `);
 
     GM_xmlhttpRequest({
         method: 'GET',
@@ -66,9 +70,42 @@
                                                 curatorDetailFound = true;
                                                 container = document.createElement('div');
                                                 container.id = 'curatorDetailContainer';
+
+                                                // Create the hide/show button
+                                                const toggleButton = document.createElement('button');
+                                                toggleButton.innerHTML = '<i class="fas fa-chevron-down"></i>'; // Minimize icon
+                                                toggleButton.id = 'toggleButton';
+
+                                                // Create a wrapper for the curation content
+                                                const contentWrapper = document.createElement('div');
+                                                contentWrapper.id = 'curationContent';
+
+                                                toggleButton.addEventListener('click', () => {
+                                                    if (container.classList.contains('minimized')) {
+                                                        // Maximize content
+                                                        container.classList.remove('minimized');
+                                                        toggleButton.innerHTML = '<i class="fas fa-chevron-down"></i>'; // Minimize icon
+                                                        contentWrapper.style.display = '';
+                                                    } else {
+                                                        // Minimize content
+                                                        container.classList.add('minimized');
+                                                        toggleButton.innerHTML = '<i class="fas fa-chevron-up"></i>';   // Maximize icon
+                                                        contentWrapper.style.display = 'none';
+                                                    }
+                                                });
+
+                                                // Append the button and content wrapper to the container
+                                                container.appendChild(toggleButton);
+                                                container.appendChild(contentWrapper);
+
+                                                // Add the container to the document body
                                                 document.body.appendChild(container);
                                             }
-                                            container.innerHTML += curatorDetail.outerHTML;
+
+                                            // Append curatorDetail content without overwriting existing elements
+                                            const curatorContent = document.createElement('div');
+                                            curatorContent.innerHTML = curatorDetail.outerHTML;
+                                            document.getElementById('curationContent').appendChild(curatorContent);
 
                                             let bodyWidth = document.body.getBoundingClientRect().width;
                                             let width = (document.querySelector('.container-table') || document.querySelector('.container')).getBoundingClientRect().width - (document.querySelector('.container-table') ? 0 : 30);
@@ -91,6 +128,11 @@
                                                     display: flex;
                                                     flex-direction: column;
                                                     gap: 20px;
+                                                }
+                                                .minimized {
+                                                    border: 1px dashed gray !important;
+                                                    height: 40px !important;
+                                                    width: 41px !important;
                                                 }
                                                 div[data-panel*="flow-children"] {
                                                     display: flex;
@@ -152,6 +194,27 @@
                                                     font-size: 12px;
                                                     gap: 20px;
                                                     flex: 1 0 100%
+                                                }
+                                                #toggleButton {
+                                                    position: absolute;
+                                                    top: 10px;
+                                                    right: 10px;
+                                                    font-size: 10px;
+                                                    background-color: #444;
+                                                    color: white;
+                                                    border: none;
+                                                    padding: 2px 5px;
+                                                    border-radius: 3px;
+                                                    cursor: pointer;
+                                                    z-index: 1;
+                                                }
+                                                #toggleButton:hover {
+                                                    background-color: #666;
+                                                }
+                                                #curationContent {
+                                                    display: flex;
+                                                    flex-direction: column;
+                                                    gap: 10px;
                                                 }
                                             `);
                                         }
