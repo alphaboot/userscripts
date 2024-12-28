@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         [SH] AScouts Curation Fetcher
-// @version      2.5
+// @version      2.6
 // @description  Display curations on SteamHunters
 // @author       alphabetsoup
 // @match        https://steamhunters.com/apps/*
@@ -210,11 +210,6 @@
                                                 }
                                                 #toggleButton:hover {
                                                     background-color: #666;
-                                                }
-                                                #curationContent {
-                                                    display: flex;
-                                                    flex-direction: column;
-                                                    gap: 10px;
                                                 }
                                             `);
                                         }
