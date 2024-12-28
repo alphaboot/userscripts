@@ -1,6 +1,7 @@
 // ==UserScript==
 // @name         [Steam] AScouts Curations Box
-// @version      2.0
+// @namespace    http://tampermonkey.net/
+// @version      2.1
 // @description  Creates a dropdown box to show curator content on Steam store pages
 // @author       alphabetsoup
 // @match        https://store.steampowered.com/app/*
@@ -29,6 +30,11 @@
         { id: '29354216', name: 'VR Achievement Hunters ' }
     ];
 
+    let bodyWidth = document.body.getBoundingClientRect().width;
+    let width = document.querySelector('.page_title_area.game_title_area.page_content').getBoundingClientRect().width;
+    console.log('bodyWidth:', bodyWidth);
+    console.log('width:', width);
+
     // Function to create a dropdown box
     function createDropdown(options) {
         var select = document.createElement('select');
@@ -36,13 +42,13 @@
         select.style.bottom = '10px';
         select.style.left = '10px';
         select.style.padding = '10px';
-        select.style.zIndex = '1000';
-        select.style.backgroundColor = '#1b2838';
+        select.style.zIndex = '1001';
+        select.style.backgroundColor = '#16202d';
         select.style.color = '#c7d5e0';
-        //select.style.border = '1px solid #c7d5e0';
+        select.style.border = '1px solid #000000';
         select.style.cursor = 'pointer';
-        select.style.width = 'calc(50vw - 490px - 20px + 1px - 10px)';
-
+        select.style.width = `calc((${bodyWidth}px - ${width}px) / 2 - 20px)`; /* half the screen minus sh content, minus 10 on each side for padding */
+        select.style.minWidth = '400px';
 
         // Add default option
         var defaultOption = document.createElement('option');
@@ -100,9 +106,10 @@
                 var curatorBox = document.createElement('div');
                 curatorBox.id = 'curatorContentBox';
                 curatorBox.style.position = 'fixed';
-                curatorBox.style.bottom = '50px';
+                curatorBox.style.bottom = '39px';
                 curatorBox.style.left = '10px';
-                curatorBox.style.width = 'calc(50vw - 490px - 20px + 1px - 10px)';
+                curatorBox.style.width = `calc((${bodyWidth}px - ${width}px) / 2 - 20px)`; /* half the screen minus sh content, minus 10 on each side for padding */
+                curatorBox.style.minWidth = '400px';
                 curatorBox.style.height = 'auto';
                 curatorBox.style.overflowY = 'auto';
                 //curatorBox.style.backgroundColor = '#16202d';
