@@ -117,7 +117,7 @@
                                                     bottom: 10px;
                                                     left: 10px;
                                                     width: calc((${bodyWidth}px - ${width}px)/2 - 20px); /* half the screen minus sh content, minus 10 on each side for padding */
-                                                    min-width: 400px;
+                                                    min-width: 350px;
                                                     max-height: 400px;
                                                     overflow-y: auto;
                                                     background: rgb(22, 32, 45);
