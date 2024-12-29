@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         [Steam] AScouts Curations Box
 // @namespace    http://tampermonkey.net/
-// @version      2.11
+// @version      2.2
 // @description  Creates a dropdown box to show curator content on Steam store pages
 // @author       alphabetsoup
 // @match        https://store.steampowered.com/app/*
-// @grant        none
+// @grant        GM_addStyle
 // @updateURL    https://raw.githubusercontent.com/alphaboot/userscripts/main/steam_curation_box.user.js
 // @downloadURL  https://raw.githubusercontent.com/alphaboot/userscripts/main/steam_curation_box.user.js
 // ==/UserScript==
@@ -35,20 +35,11 @@
     console.log('bodyWidth:', bodyWidth);
     console.log('width:', width);
 
+
     // Function to create a dropdown box
     function createDropdown(options) {
         var select = document.createElement('select');
-        select.style.position = 'fixed';
-        select.style.bottom = '10px';
-        select.style.left = '10px';
-        select.style.padding = '10px';
-        select.style.zIndex = '1001';
-        select.style.backgroundColor = '#16202d';
-        select.style.color = '#c7d5e0';
-        select.style.border = '1px solid #000000';
-        select.style.cursor = 'pointer';
-        select.style.width = `calc((${bodyWidth}px - ${width}px) / 2 - 20px)`; /* half the screen minus sh content, minus 10 on each side for padding */
-        select.style.minWidth = '350px';
+        select.className = 'curator-dropdown';
 
         // Add default option
         var defaultOption = document.createElement('option');
@@ -87,7 +78,7 @@
         const baseUrl = currentURL.split('?')[0];
         const curatorURL = `${baseUrl}?curator_clanid=${curatorClanID}`;
 
-        console.log('Fetching curator content from:', curatorURL);  // Log the URL being fetched
+        console.log('Fetching curator content from:', curatorURL); // Log the URL being fetched
 
         fetch(curatorURL)
             .then(response => response.text())
@@ -105,19 +96,6 @@
                 // Create a container for the curator_detail_right_ctn content
                 var curatorBox = document.createElement('div');
                 curatorBox.id = 'curatorContentBox';
-                curatorBox.style.position = 'fixed';
-                curatorBox.style.bottom = '39px';
-                curatorBox.style.left = '10px';
-                curatorBox.style.width = `calc((${bodyWidth}px - ${width}px) / 2 - 20px)`; /* half the screen minus sh content, minus 10 on each side for padding */
-                curatorBox.style.minWidth = '350px';
-                curatorBox.style.height = 'auto';
-                curatorBox.style.overflowY = 'auto';
-                //curatorBox.style.backgroundColor = '#16202d';
-                //curatorBox.style.color = '#c7d5e0';
-                //curatorBox.style.border = '1px solid #c7d5e0';
-                //curatorBox.style.padding = '10px';
-                curatorBox.style.zIndex = '1000';
-                curatorBox.style.display = 'block';
 
                 // Append the entire curator_detail_right_ctn content
                 for (var i = 0; i < referringCurators.length; i++) {
@@ -126,10 +104,6 @@
                         var curatorElement = referringCurators[i].cloneNode(true);
                         curatorElement.innerHTML = '';
                         curatorElement.appendChild(curatorDetail[0].cloneNode(true));
-
-                        // Modify the CSS of the fetched content
-                        customizeCuratorCSS(curatorElement);
-
                         curatorBox.appendChild(curatorElement);
                     }
                 }
@@ -140,24 +114,6 @@
             .catch(error => console.error('Error fetching curator content:', error));
     }
 
-    // Function to modify the CSS of the fetched content
-    function customizeCuratorCSS(element) {
-        // Example: Change the background color and font size
-        element.style.setProperty('background', '#16202d');       // Set a custom background color
-        element.style.setProperty('border', '1px solid black');
-        element.style.setProperty('box-shadow', '0px 0px 10px rgba(0, 0, 0, 0.5)');
-        element.style.setProperty('padding', '10px');
-
-        // Customize specific child elements (e.g., headers, paragraphs)
-        var paragraphs = element.querySelectorAll('p');
-        paragraphs.forEach(function(paragraph) {
-            paragraph.style.setProperty('font-size', '13px');
-            paragraph.style.setProperty('font-style', 'normal');
-            paragraph.style.setProperty('font-family', 'Arial, Helvetica, sans-serif');
-            paragraph.style.setProperty('line-height', 'normal');
-        });
-    }
-
     // Function to extract curators from the steam_curators_block
     function extractCurators(doc = document) {
         var curators = [];
@@ -166,7 +122,7 @@
         curatorLinks.forEach(function(link) {
             var urlParts = link.href.split('/curator/')[1].split('/');
             var id = urlParts[0].split('-')[0];
-            var name = urlParts[0];  // Use the text in the URL after curator/ and before /?appid=304430
+            var name = urlParts[0]; // Use the text in the URL after curator/ and before /?appid=304430
             curators.push({ id: id, name: decodeURIComponent(name) });
         });
 
@@ -180,7 +136,7 @@
     if (hasCuratorClangID) {
         // Remove the curator_clanid parameter and fetch the steam_curators_block from the URL without it
         const baseUrl = window.location.href.split('?')[0];
-        console.log('Fetching base URL from:', baseUrl);  // Log the URL being fetched
+        console.log('Fetching base URL from:', baseUrl); // Log the URL being fetched
 
         fetch(baseUrl)
             .then(response => response.text())
@@ -208,4 +164,52 @@
             createDropdown(curators);
         }
     }
+
+    // Add styles using GM_addStyle
+    GM_addStyle(`
+        .curator-dropdown {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            padding: 10px;
+            z-index: 1001;
+            background-color: #16202d;
+            color: #c7d5e0;
+            border: 1px solid #000000;
+            cursor: pointer;
+            width: calc((${bodyWidth}px - ${width}px) / 2 - 20px);
+            min-width: 350px;
+        }
+        #curatorContentBox {
+            position: fixed;
+            bottom: 47px;
+            left: 10px;
+            box-sizing: border-box;
+            width: calc((${bodyWidth}px - ${width}px) / 2 - 20px);
+            min-width: 350px;
+            height: auto;
+            background: #16202d;
+            border: 1px solid black;
+            z-index: 1000;
+            display: block;
+        }
+        #curatorContentBox .referring_curator {
+	        background: unset;
+	        margin: unset;
+		    box-shadow: unset;
+            width: auto;
+            height: auto;
+            padding: 10px;
+            overflow: hidden;
+        }
+        #curatorContentBox p {
+            font-size: 13px;
+            line-height: normal;
+            padding-top: unset;
+            padding-bottom: 6px;
+            text-indent: 0px;
+        }
+    `);
+
+
 })();
