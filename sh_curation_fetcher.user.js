@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         [SH] AScouts Curation Fetcher
-// @version      2.62
+// @version      2.63
 // @description  Display curations on SteamHunters
 // @author       alphabetsoup
 // @match        https://steamhunters.com/apps/*
@@ -33,7 +33,7 @@
     let container;
 
     GM_addStyle(`
-        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
+        @import url('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
     `);
 
     GM_xmlhttpRequest({
@@ -73,7 +73,7 @@
 
                                                 // Create the hide/show button
                                                 const toggleButton = document.createElement('button');
-                                                toggleButton.innerHTML = '<i class="fas fa-chevron-down"></i>'; // Minimize icon
+                                                toggleButton.innerHTML = '<i class="fa fa-chevron-down" aria-hidden="true"></i>'; // Minimize icon
                                                 toggleButton.id = 'toggleButton';
 
                                                 // Create a wrapper for the curation content
@@ -84,12 +84,12 @@
                                                     if (container.classList.contains('minimized')) {
                                                         // Maximize content
                                                         container.classList.remove('minimized');
-                                                        toggleButton.innerHTML = '<i class="fas fa-chevron-down"></i>'; // Minimize icon
+                                                        toggleButton.innerHTML = '<i class="fa fa-chevron-down" aria-hidden="true"></i>'; // Minimize icon
                                                         contentWrapper.style.display = '';
                                                     } else {
                                                         // Minimize content
                                                         container.classList.add('minimized');
-                                                        toggleButton.innerHTML = '<i class="fas fa-chevron-up"></i>';   // Maximize icon
+                                                        toggleButton.innerHTML = '<i class="fa fa-chevron-up" aria-hidden="true"></i>'; // Maximize icon
                                                         contentWrapper.style.display = 'none';
                                                     }
                                                 });
