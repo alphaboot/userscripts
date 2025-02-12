@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Holodex Video Sorter
-// @version      2.0
+// @version      2.01
 // @description  Sort videos on Holodex by viewers or duration (without refresh)
 // @author       alphabetsoup
 // @match        https://holodex.net/*
@@ -38,7 +38,7 @@
 
     // Sort videos based on the chosen criteria
     function sortVideos(byViewers, reverse = false) {
-        const videoContainer = document.querySelector('.row.video-row.row--dense');
+        const videoContainer = document.querySelector('.row.video-row');
         const videoCards = Array.from(videoContainer.querySelectorAll('.video-col'));
 
         videoCards.sort((a, b) => {
