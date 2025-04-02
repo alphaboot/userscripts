@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Holodex Video Sorter
-// @version      2.01
+// @version      2.02
 // @description  Sort videos on Holodex by viewers or duration (without refresh)
 // @author       alphabetsoup
 // @match        https://holodex.net/*
-// @exclude      https://holodex.net/multiview
+// @exclude      https://holodex.net/multiview*
 // @grant        none
 // @updateURL    https://raw.githubusercontent.com/alphaboot/userscripts/main/holodex_video_sorter.user.js
 // @downloadURL  https://raw.githubusercontent.com/alphaboot/userscripts/main/holodex_video_sorter.user.js
