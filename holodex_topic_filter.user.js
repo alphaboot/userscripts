@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Holodex Video Topic Filter
-// @version      2.0
+// @version      2.01
 // @description  Adds a menu to filter videos by topic on Holodex
 // @author       alphabetsoup
 // @match        https://holodex.net/*
-// @exclude      https://holodex.net/multiview
+// @exclude      https://holodex.net/multiview*
 // @grant        none
 // @updateURL    https://raw.githubusercontent.com/alphaboot/userscripts/main/holodex_topic_filter.user.js
 // @downloadURL  https://raw.githubusercontent.com/alphaboot/userscripts/main/holodex_topic_filter.user.js
