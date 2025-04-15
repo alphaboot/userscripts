@@ -16,15 +16,22 @@
     'use strict';
 
     // Find the canvas element by its ID
-    var canvasElement = document.getElementById('pointsChartCanvas');
+    var potGraph = document.getElementById('pointsChartCanvas');
+    var cgotGraph = document.getElementById('completedGamesChartCanvas');
+    var aotGraph = document.getElementById('achievementsChartCanvas');
 
-    if (canvasElement) {
-        // Get the parent element of the canvas
-        var parentDiv = canvasElement.parentElement;
+    var graphs = [potGraph, cgotGraph, aotGraph];
 
-        if (parentDiv && parentDiv.classList.contains('col-sm-6')) {
-            // Change the width of the parent div to 100%
-            parentDiv.style.width = '100%';
+
+    graphs.forEach((graph) => {
+        if (graph) {
+            // Get the parent element of the canvas
+            var parentDiv = graph.parentElement;
+
+            if (parentDiv && parentDiv.classList.contains('col-sm-6')) {
+                // Change the width of the parent div to 100%
+                parentDiv.style.width = '100%';
+            }
         }
-    }
+    });
 })();
