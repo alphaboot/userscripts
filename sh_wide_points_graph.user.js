@@ -9,9 +9,6 @@
 // @downloadURL  https://raw.githubusercontent.com/alphaboot/userscripts/main/sh_wide_points_graph.user.js
 // ==/UserScript==
 
-// for browser console (requires changing display to something else as well):
-// document.getElementById('pointsChartCanvas').parentElement.style.width = '100%'; document.getElementById('pointsChartCanvas').style.display = 'inline-block';
-
 (function() {
     'use strict';
 
