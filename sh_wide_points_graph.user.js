@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         [SH] Wide 'Points Over Time' Graph
-// @version      1.3
+// @version      1.4
 // @description  Changes the 'Points Over Time' graph width to 100%
 // @author       alphabetsoup
 // @match        https://steamhunters.com/id/*/stats
