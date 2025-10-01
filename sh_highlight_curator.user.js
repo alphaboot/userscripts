@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         [SH] Highlight Curator
-// @version      1.2
+// @version      1.3
 // @description  Highlight curated games
 // @author       alphabetsoup
-// @match        https://steamhunters.com/*
+// @match        https://steamhunters.com/*/games*
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_deleteValue
