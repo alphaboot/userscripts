@@ -1,14 +1,13 @@
 // ==UserScript==
 // @name         [SH] Highlight Curator
-// @version      1.4
-// @description  Highlight curated games
+// @version      2.0
+// @description  Highlight curated games on SteamHunters
 // @author       alphabetsoup
 // @match        https://steamhunters.com/games*
 // @match        https://steamhunters.com/*/games*
+// @grant        GM_xmlhttpRequest
 // @grant        GM_setValue
 // @grant        GM_getValue
-// @grant        GM_deleteValue
-// @grant        GM_listValues
 // @updateURL    https://raw.githubusercontent.com/alphaboot/userscripts/main/sh_highlight_curator.user.js
 // @downloadURL  https://raw.githubusercontent.com/alphaboot/userscripts/main/sh_highlight_curator.user.js
 // ==/UserScript==
@@ -19,21 +18,24 @@
     // Retrieve curator data from GM storage
     const curatorData = JSON.parse(GM_getValue('curatorData', '[]'));
 
-    // Define the highlight colors for different curators
-    const highlightColors = {
-        "S1": "#7aff0e",
-        "S2": "#7aff0e",
-        "S3": "#7aff0e",
-        "S4": "#7aff0e",
-        "R1": "#ff650c",
-        "R2": "#ff650c",
-        "R3": "#ff650c",
-        "R4": "#ff650c",
-        "B1": "#dc1110",
-        "BR": "#c76236",
-        "NSFW1": "#a60bdb",
-        "NSFWR": "#dc0dc5",
-    };
+    // Define curators with colors in one array
+    const curators = [
+        { id: '31507748', name: 'Achievement Scouts', color: '#7aff0e' },
+        { id: '33207241', name: 'Achievement Scouts 2', color: '#7aff0e' },
+        { id: '33219357', name: 'Achievement Scouts 3', color: '#7aff0e' },
+        { id: '33219361', name: 'Achievement Scouts 4', color: '#7aff0e' },
+        { id: '34752873', name: 'Achievement Scouts Restricted', color: '#ff650c' },
+        { id: '35709504', name: 'Achievement Scouts Restricted 2', color: '#ff650c' },
+        { id: '35709530', name: 'Achievement Scouts Restricted 3', color: '#ff650c' },
+        { id: '35709536', name: 'Achievement Scouts Restricted 4', color: '#ff650c' },
+        { id: '44900522', name: 'Achievement Scouts Broken', color: '#dc1110' },
+        { id: '44900614', name: 'Achievement Scouts Broken Restricted', color: '#c76236' },
+        { id: '44900624', name: 'Achievement Scouts NSFW', color: '#a60bdb' },
+        { id: '44900660', name: 'Achievement Scouts NSFW Restricted', color: '#dc0dc5' }
+    ];
+
+    const page_size = 500;
+    const pages = 4;
 
     function createStyledButton(text, top, onClick) {
         const button = document.createElement('button');
@@ -59,7 +61,26 @@
     }
 
     function addImportButton() {
-        createStyledButton('Import JSON', 80, importJsonToStorage);
+        createStyledButton('Import JSON', 80, fetchCuratorData);
+    }
+
+    let statusBox;
+
+    function updateStatus(msg) {
+        if (!statusBox) {
+            statusBox = document.createElement("div");
+            statusBox.style.position = "fixed";
+            statusBox.style.bottom = "10px";
+            statusBox.style.right = "10px";
+            statusBox.style.zIndex = 10000;
+            statusBox.style.background = "rgba(0,0,0,0.8)";
+            statusBox.style.color = "white";
+            statusBox.style.padding = "8px 12px";
+            statusBox.style.borderRadius = "6px";
+            statusBox.style.fontSize = "14px";
+            document.body.appendChild(statusBox);
+        }
+        statusBox.textContent = msg;
     }
 
     function hexToRgbA(hex, alpha) {
@@ -89,7 +110,8 @@
                 const curator = curatorData.find(c => c.appid === appid);
 
                 if (curator) {
-                    let color = highlightColors[curator.curator];
+                    const curatorColorMap = Object.fromEntries(curators.map(c => [c.id, c.color]));
+                    let color = curatorColorMap[curator.curator];
                     let transparentColor = hexToRgbA(color, 0.5); // Set transparency to 50%
                     const grandparent = link.parentElement?.parentElement;
 
@@ -103,30 +125,57 @@
         });
     }
 
-    async function importJsonToStorage() {
-    const jsonUrl = "https://raw.githubusercontent.com/alphaboot/achievement-scouts/main/apps.json"; // replace with your actual JSON link
+    async function fetchCuratorData() {
+        let allData = []; // clear old data
 
-    try {
-        // Fetch JSON
-        const resp = await fetch(jsonUrl);
-        const data = await resp.json();
+        for (const curator of curators) {
+            for (let i = 0; i < pages; i++) {
+                const start = i * page_size;
+                const url = `https://store.steampowered.com/curator/${curator.id}-${curator.name}/admin/ajaxgetrecommendations/?query&start=${start}&count=${page_size}`;
 
-        // Clear existing GM storage
-        for (const key of GM_listValues()) {
-            GM_deleteValue(key);
+                updateStatus(`Fetching ${curator.name} (page ${i+1}/${pages}) …`);
+
+                await new Promise((resolve) => {
+                    GM_xmlhttpRequest({
+                        method: "GET",
+                        url: url,
+                        withCredentials: true,
+                        onload: function(res) {
+                            try {
+                                const data = JSON.parse(res.responseText);
+                                if (data && data.recommendations) {
+                                    for (const rec of data.recommendations) {
+                                        const appid = rec.appid;
+                                        const clanid = rec.recommendation?.clanid;
+                                        if (appid && clanid) {
+                                            allData.push({
+                                                appid: appid,
+                                                curator: clanid
+                                            });
+                                        }
+                                    }
+                                }
+                            } catch (e) {
+                                console.error("Parse error:", e);
+                            }
+                            resolve();
+                        },
+                        onerror: function(err) {
+                            console.error("Request failed:", url, err);
+                            resolve();
+                        }
+                    });
+                });
+            }
         }
 
-        // Save new data
-        for (const [key, value] of Object.entries(data)) {
-            GM_setValue(key, value);
-        }
+        GM_setValue("curatorData", JSON.stringify(allData));
+        console.log("Stored curatorData:", allData);
 
-        alert("Imported JSON and replaced GM storage!");
-    } catch (err) {
-        console.error("Error importing JSON:", err);
-        alert("Failed to import JSON.");
+        updateStatus(`✅ Done! Stored ${allData.length} entries`);
+        setTimeout(() => { if (statusBox) statusBox.remove(); }, 5000);
     }
-}
+
 
     // Add the button when the page loads
     addHighlightButton();
