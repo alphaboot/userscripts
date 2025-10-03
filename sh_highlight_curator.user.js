@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         [SH] Highlight Curator
-// @version      2.0
+// @version      2.1
 // @description  Highlight curated games on SteamHunters
 // @author       alphabetsoup
 // @match        https://steamhunters.com/games*
 // @match        https://steamhunters.com/*/games*
+// @match        https://steamhunters.com/dlc*
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setValue
 // @grant        GM_getValue
@@ -61,7 +62,7 @@
     }
 
     function addImportButton() {
-        createStyledButton('Import JSON', 80, fetchCuratorData);
+        createStyledButton('Import Data', 80, fetchCuratorData);
     }
 
     let statusBox;
@@ -131,7 +132,7 @@
         for (const curator of curators) {
             for (let i = 0; i < pages; i++) {
                 const start = i * page_size;
-                const url = `https://store.steampowered.com/curator/${curator.id}-${curator.name}/admin/ajaxgetrecommendations/?query&start=${start}&count=${page_size}`;
+                const url = `https://store.steampowered.com/curator/${curator.id}/admin/ajaxgetrecommendations/?query&start=${start}&count=${page_size}`;
 
                 updateStatus(`Fetching ${curator.name} (page ${i+1}/${pages}) …`);
 
