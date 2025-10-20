@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         [Steam] Add Achievement Links to User Content
-// @version      1.1
+// @version      1.2
 // @description  Adds "View Achievements" link under each creator
 // @match        https://steamcommunity.com/sharedfiles/filedetails/?id=*
 // @grant        none
 // @updateURL    https://raw.githubusercontent.com/alphaboot/userscripts/main/steam_add_achievement_links_user_content.user.js
-// @downloadURL    https://raw.githubusercontent.com/alphaboot/userscripts/main/steam_add_achievement_links_user_content.user.js
+// @downloadURL  https://raw.githubusercontent.com/alphaboot/userscripts/main/steam_add_achievement_links_user_content.user.js
 // ==/UserScript==
 
 (function() {
