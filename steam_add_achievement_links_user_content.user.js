@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         [Steam] Add Achievement Links to User Content
-// @version      1.2
-// @description  Adds "View Achievements" link under each creator
+// @version      1.3
+// @description  Adds Achievements link to each creator
 // @match        https://steamcommunity.com/sharedfiles/filedetails/?id=*
 // @grant        none
 // @updateURL    https://raw.githubusercontent.com/alphaboot/userscripts/main/steam_add_achievement_links_user_content.user.js
@@ -30,33 +30,36 @@
         }
 
         creators.forEach(creator => {
-            const profileLink = creator.querySelector('a.friendBlockLinkOverlay');
-            if (!profileLink) return;
+            const overlay = creator.querySelector('.friendBlockLinkOverlay');
+            if (!overlay) return;
 
-            const profileURL = profileLink.href;
+            const profileURL = overlay.href;
             const achievementsURL = `${profileURL}/stats/${appid}`;
 
             // Create the "View Achievements" link
             const link = document.createElement('a');
             link.href = achievementsURL;
-            link.textContent = 'View Achievements';
+            link.textContent = '🏆';
             link.className = 'viewAchievementsLink';
-            link.target = '_blank'; // optional: open in new tab
+            link.target = '_blank';
 
-            // Basic styling
-            link.style.display = 'block';
-            link.style.marginTop = '-4px';
-            link.style.marginBottom = '6px';
-            link.style.fontSize = '11px';
+            // --- Proper bottom-right placement ---
+            creator.style.position = 'relative'; // make parent the positioning container
+            link.style.position = 'absolute';
+            link.style.bottom = '3px';
+            link.style.right = '3px';
+            link.style.fontSize = '14px';
             link.style.color = '#66c0f4';
             link.style.textDecoration = 'none';
             link.style.fontFamily = 'Motiva Sans, Arial, sans-serif';
+            link.style.zIndex = '20'; // above overlay
+            link.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+            link.style.padding = '4px 4px';
+            link.style.borderRadius = '3px';
+            link.style.pointerEvents = 'auto'; // allow clicking
 
-            link.addEventListener('mouseover', () => link.style.textDecoration = 'underline');
-            link.addEventListener('mouseout', () => link.style.textDecoration = 'none');
-
-            // Insert the link after each .friendBlock
-            creator.insertAdjacentElement('afterend', link);
+            // Add inside the friendBlock so it appears over the overlay
+            creator.appendChild(link);
         });
     });
 })();
