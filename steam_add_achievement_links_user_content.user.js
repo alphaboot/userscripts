@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         [Steam] Add Achievement Links to User Content
-// @version      1.3
+// @version      1.4
 // @description  Adds Achievements link to each creator
 // @match        https://steamcommunity.com/sharedfiles/filedetails/?id=*
 // @grant        none
