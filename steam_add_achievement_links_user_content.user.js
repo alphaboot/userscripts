@@ -30,10 +30,10 @@
         }
 
         creators.forEach(creator => {
-            const overlay = creator.querySelector('.friendBlockLinkOverlay');
-            if (!overlay) return;
+            const profileLink = creator.querySelector('.friendBlockLinkOverlay');
+            if (!profileLink) return;
 
-            const profileURL = overlay.href;
+            const profileURL = profileLink.href;
             const achievementsURL = `${profileURL}/stats/${appid}`;
 
             // Create the "View Achievements" link
