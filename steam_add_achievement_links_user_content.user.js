@@ -30,7 +30,7 @@
         }
 
         creators.forEach(creator => {
-            const profileLink = creator.querySelector('.friendBlockLinkOverlay');
+            const profileLink = creator.querySelector('a.friendBlockLinkOverlay');
             if (!profileLink) return;
 
             const profileURL = profileLink.href;
