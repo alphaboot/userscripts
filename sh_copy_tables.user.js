@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         [SH] Copy Tables
-// @version      1.0
-// @description  Copy SH table with ease (hopefully)
+// @version      1.1
+// @description  Copy SH tables
 // @author       alphabetsoup
 // @match        https://steamhunters.com/*
 // @grant        none
@@ -19,52 +19,45 @@
     const buttonsContainer = document.createElement('div');
     buttonsContainer.style.textAlign = 'right';
 
-    // Create the button to copy all columns except the first
+    // Copy All button
     const copyAllColumnsButton = document.createElement('button');
     copyAllColumnsButton.classList.add('btn', 'btn-default', 'btn-xs', 'collapsed');
     copyAllColumnsButton.type = 'button';
     copyAllColumnsButton.textContent = 'Copy All';
 
-    // Create the button to copy only the text inside the class "text-body"
+    // Copy Names button
     const copyTextBodyButton = document.createElement('button');
     copyTextBodyButton.classList.add('btn', 'btn-default', 'btn-xs', 'collapsed');
     copyTextBodyButton.type = 'button';
     copyTextBodyButton.textContent = 'Copy Names';
 
-    // Append both buttons to the buttons container
+    // Copy AppIDs button
+    const copyAppIDsButton = document.createElement('button');
+    copyAppIDsButton.classList.add('btn', 'btn-default', 'btn-xs', 'collapsed');
+    copyAppIDsButton.type = 'button';
+    copyAppIDsButton.textContent = 'Copy AppIDs';
+
+    // Append buttons to container
     buttonsContainer.appendChild(copyAllColumnsButton);
     buttonsContainer.appendChild(copyTextBodyButton);
+    buttonsContainer.appendChild(copyAppIDsButton);
 
     // Insert the buttons container at the beginning of the parent element
     parentElement.prepend(buttonsContainer);
 
-    // Add an event listener to the button to copy all columns except the first when clicked
-    copyAllColumnsButton.addEventListener('click', function() {
-        copyColumns(false);
-    });
+    // Event listeners
+    copyAllColumnsButton.addEventListener('click', () => copyColumns(false));
+    copyTextBodyButton.addEventListener('click', () => copyColumns(true));
+    copyAppIDsButton.addEventListener('click', copyAppIDs);
 
-    // Add an event listener to the button to copy only the text inside the class "text-body" when clicked
-    copyTextBodyButton.addEventListener('click', function() {
-        copyColumns(true);
-    });
-
-    // Function to copy columns based on the parameter (true for text-body, false for all columns)
+    // Function to copy columns based on the parameter
     function copyColumns(textBodyOnly) {
-        // Get the table wrapper element
         const tableWrapper = document.querySelector('div.table-wrapper');
-
-        // Get all table rows inside the table wrapper
         const rows = tableWrapper.querySelectorAll('tbody tr');
-
-        // Initialize an empty string to store the tab-separated values
         let result = '';
 
-        // Loop through each row
         rows.forEach(row => {
-            // Get all cells in the row
             const cells = Array.from(row.querySelectorAll('td'));
-
-            // Loop through each cell and append its text content to the result string separated by tabs
             cells.forEach(cell => {
                 if (textBodyOnly && cell.classList.contains('text-body')) {
                     result += cell.textContent.trim() + '\t';
@@ -72,15 +65,25 @@
                     result += cell.textContent.trim() + '\t';
                 }
             });
-
-            // Add a new line after each row
             result += '\n';
         });
 
-        // Remove leading tabs, blank lines, and trailing tabs
         result = result.replace(/^\s*[\r\n]+|\t+$/gm, '');
+        navigator.clipboard.writeText(result);
+    }
 
-        // Copy the result to the clipboard
+    // Function to copy appids
+    function copyAppIDs() {
+        const tableWrapper = document.querySelector('div.table-wrapper');
+        const links = tableWrapper.querySelectorAll('td.text-body a[href*="/apps/"]');
+        const appIDs = [];
+
+        links.forEach(link => {
+            const match = link.href.match(/\/apps\/(\d+)\//);
+            if (match) appIDs.push(match[1]);
+        });
+
+        const result = appIDs.join('\n');
         navigator.clipboard.writeText(result);
     }
 })();
