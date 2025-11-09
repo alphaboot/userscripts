@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         [SH] Highlight Curator
-// @version      2.1
+// @version      2.2
 // @description  Highlight curated games on SteamHunters
 // @author       alphabetsoup
 // @match        https://steamhunters.com/games*
@@ -15,9 +15,6 @@
 
 (function() {
     'use strict';
-
-    // Retrieve curator data from GM storage
-    const curatorData = JSON.parse(GM_getValue('curatorData', '[]'));
 
     // Define curators with colors in one array
     const curators = [
@@ -97,6 +94,10 @@
 
     // Function to highlight the grandparent elements of the links
     function highlightLinks() {
+
+        // Retrieve curator data from GM storage
+        const curatorData = JSON.parse(GM_getValue('curatorData', '[]'));
+
         // Find all the anchor links on the page
         const links = document.querySelectorAll('a');
 
