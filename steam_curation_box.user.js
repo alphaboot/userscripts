@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         [Steam] AScouts Curations Box
 // @namespace    http://tampermonkey.net/
-// @version      2.2
+// @version      2.3
 // @description  Creates a dropdown box to show curator content on Steam store pages
 // @author       alphabetsoup
 // @match        https://store.steampowered.com/app/*
@@ -178,7 +178,7 @@
             border: 1px solid #000000;
             cursor: pointer;
             width: calc((${bodyWidth}px - ${width}px) / 2 - 20px);
-            min-width: 350px;
+            min-width: 300px;
         }
         #curatorContentBox {
             position: fixed;
@@ -186,7 +186,7 @@
             left: 10px;
             box-sizing: border-box;
             width: calc((${bodyWidth}px - ${width}px) / 2 - 20px);
-            min-width: 350px;
+            min-width: 300px;
             height: auto;
             background: #16202d;
             border: 1px solid black;
