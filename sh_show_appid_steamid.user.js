@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         [SH] Show AppIDs and SteamIDs
-// @version      2.0
+// @version      2.1
 // @description  Display AppID and SteamIDs on game and user pages
 // @author       alphabetsoup
 // @match        https://steamhunters.com/*
@@ -67,13 +67,15 @@
             if (infoHtml !== '') {
                 const infoDiv = document.createElement('div');
                 infoDiv.innerHTML = infoHtml;
+                // infoDiv.style.margin = '10px';
 
-                // Find the target div with the class 'btn-group btn-group-lg btn-group-condensed btn-group-icons'
-                const targetDiv = document.querySelector('.btn-group.btn-group-lg.btn-group-condensed.btn-group-icons');
+                // Find the target div
+                const targetDiv = document.querySelector('.media-heading');
 
                 if (targetDiv) {
-                    // Insert the new div at the start of the target div
-                    targetDiv.insertBefore(infoDiv, targetDiv.firstChild);
+                    targetDiv.after(infoDiv);
+                    // targetDiv.insertBefore(infoDiv, targetDiv.firstChild);
+                    // targetDiv.appendChild(infoDiv);
                 }
 
                 // Add event listener to copy text when clicked
