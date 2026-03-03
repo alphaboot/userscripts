@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         [Steam] AScouts Curations Box
-// @version      2.4
+// @version      2.5
 // @description  Creates a dropdown box to show curator content on Steam store pages
 // @author       alphabetsoup
 // @match        https://store.steampowered.com/app/*
