@@ -33,12 +33,6 @@
         { id: '29354216', name: 'VR Achievement Hunters ' }
     ];
 
-    const targetCuratorIDs = [
-        '31507748', '33207241', '33219357', '33219361', '34752873',
-        '35709504', '35709530', '35709536', '44900522', '44900614',
-        '44900624', '44900660', '29354216'
-    ];
-
     const appIdMatch = window.location.pathname.match(/\/apps\/(\d+)\//);
     const appId = appIdMatch ? appIdMatch[1] : null;
 
