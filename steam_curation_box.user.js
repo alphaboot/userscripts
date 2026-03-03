@@ -19,6 +19,7 @@
         { id: '33207241', name: 'Achievement Scouts 2' },
         { id: '33219357', name: 'Achievement Scouts 3' },
         { id: '33219361', name: 'Achievement Scouts 4' },
+		{ id: '33219363', name: 'Achievement Scouts 5' },
         { id: '34752873', name: 'Achievement Scouts: Restricted' },
         { id: '35709504', name: 'Achievement Scouts: Restricted 2' },
         { id: '35709530', name: 'Achievement Scouts: Restricted 3' },
