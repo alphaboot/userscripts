@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         [SH] AScouts Curation Fetcher
-// @version      2.63
+// @version      2.7
 // @description  Display curations on SteamHunters
 // @author       alphabetsoup
 // @match        https://steamhunters.com/apps/*
@@ -15,6 +15,23 @@
 
 (function() {
     'use strict';
+
+    const predefinedCurators = [
+        { id: '31507748', name: 'Achievement Scouts' },
+        { id: '33207241', name: 'Achievement Scouts 2' },
+        { id: '33219357', name: 'Achievement Scouts 3' },
+        { id: '33219361', name: 'Achievement Scouts 4' },
+		{ id: '33219363', name: 'Achievement Scouts 5' },
+        { id: '34752873', name: 'Achievement Scouts: Restricted' },
+        { id: '35709504', name: 'Achievement Scouts: Restricted 2' },
+        { id: '35709530', name: 'Achievement Scouts: Restricted 3' },
+        { id: '35709536', name: 'Achievement Scouts: Restricted 4' },
+        { id: '44900522', name: 'Achievement-Scouts: Broken' },
+        { id: '44900614', name: 'Achievement-Scouts: Broken Restricted' },
+        { id: '44900624', name: 'Achievement-Scouts: NSFW' },
+        { id: '44900660', name: 'Achievement-Scouts: NSFW Restricted' },
+        { id: '29354216', name: 'VR Achievement Hunters ' }
+    ];
 
     const targetCuratorIDs = [
         '31507748', '33207241', '33219357', '33219361', '34752873',
@@ -54,7 +71,7 @@
                         const fullCuratorID = pathParts[2];
                         const curatorID = fullCuratorID.split('-')[0];
 
-                        if (targetCuratorIDs.includes(curatorID)) {
+                        if (predefinedCurators.some(c => c.id === curatorID)) {
                             const curatorUrl = `https://store.steampowered.com/app/${appId}/?curator_clanid=${curatorID}`;
 
                             GM_xmlhttpRequest({
