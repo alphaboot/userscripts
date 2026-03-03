@@ -1,6 +1,5 @@
 // ==UserScript==
 // @name         [Steam] AScouts Curations Box
-// @namespace    http://tampermonkey.net/
 // @version      2.4
 // @description  Creates a dropdown box to show curator content on Steam store pages
 // @author       alphabetsoup
