@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         [Steam] AScouts Curations Box
-// @version      2.5
+// @version      2.6
 // @description  Creates a dropdown box to show curator content on Steam store pages
 // @author       alphabetsoup
 // @match        https://store.steampowered.com/app/*
@@ -23,6 +23,7 @@
         { id: '35709504', name: 'Achievement Scouts: Restricted 2' },
         { id: '35709530', name: 'Achievement Scouts: Restricted 3' },
         { id: '35709536', name: 'Achievement Scouts: Restricted 4' },
+        { id: '44538292', name: 'Achievement Scouts: Restricted 5' },
         { id: '44900522', name: 'Achievement-Scouts: Broken' },
         { id: '44900614', name: 'Achievement-Scouts: Broken Restricted' },
         { id: '44900624', name: 'Achievement-Scouts: NSFW' },
