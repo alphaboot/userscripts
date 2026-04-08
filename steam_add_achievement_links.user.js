@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         [Steam] Add Achievement Links
-// @version      1.7
+// @version      1.80
 // @description  Adds achievements links to Steam store reviews and Steam community
 // @author       alphabetsoup
 // @match        https://store.steampowered.com/app/*
@@ -21,15 +21,18 @@
 
     function addAchievementsLinkToReviews() {
         const observer = new MutationObserver(() => {
-            document.querySelectorAll('.author_details').forEach(review => {
+            document.querySelectorAll('._1FJB6124h53YHFICMSC1Nv').forEach(review => {
                 if (!review.querySelector('.num_achievements')) {
-                    const profileLink = review.querySelector('.persona_name a');
+                    const container = review.closest('._4pj7vPPl2cD7Orooy3rbL');
+                    const profileLink = container.querySelector(':scope > a');
                     if (profileLink) {
                         const profileURL = profileLink.href;
                         const achievementsURL = `${profileURL}stats/${appid}/achievements/`;
-                        const achievementLink = document.createElement('div');
-                        achievementLink.className = 'num_reviews num_achievements';
-                        achievementLink.innerHTML = `<a href="${achievementsURL}" target="_blank">View Achievements</a>`;
+                        const achievementLink = document.createElement('a');
+                        achievementLink.className = '_24Z0sYrwo1ALn7WkF98RaU num_achievements';
+                        achievementLink.href = achievementsURL;
+                        achievementLink.target = '_blank';
+                        achievementLink.textContent = 'View Achievements';
 
                         review.appendChild(achievementLink);
                     }
