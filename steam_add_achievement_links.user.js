@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         [Steam] Add Achievement Links
-// @version      1.80
+// @version      1.90
 // @description  Adds achievements links to Steam store reviews and Steam community
 // @author       alphabetsoup
 // @match        https://store.steampowered.com/app/*
@@ -19,6 +19,7 @@
 
     if (!appid) return;
 
+    // REVIEWS
     function addAchievementsLinkToReviews() {
         const observer = new MutationObserver(() => {
             document.querySelectorAll('._1FJB6124h53YHFICMSC1Nv').forEach(review => {
@@ -42,27 +43,45 @@
         observer.observe(document.body, { childList: true, subtree: true });
     }
 
+    // THREADS
     function addAchievementsLinkToPopup() {
         function processPopups() {
             document.querySelectorAll('.popup_body.popup_menu').forEach(node => {
                 if (!node.querySelector('.achievements_link')) {
-                    const profileLink = node.querySelector('a[href*="steamcommunity.com/id/"], a[href*="steamcommunity.com/profiles/"]');
+                    const profileLink = node.querySelector(
+                        'a[href*="steamcommunity.com/id/"], a[href*="steamcommunity.com/profiles/"]'
+                    );
+
                     if (profileLink) {
                         const profileURL = profileLink.href;
                         const achievementsURL = `${profileURL}/stats/${appid}/achievements/`;
+
                         const achievementMenuItem = document.createElement('a');
                         achievementMenuItem.href = achievementsURL;
                         achievementMenuItem.className = 'popup_menu_item tight achievements_link';
                         achievementMenuItem.textContent = 'View Achievements';
+
                         node.appendChild(achievementMenuItem);
                     }
                 }
             });
         }
 
+        // Run once initially
         processPopups();
+
+        // Observe DOM changes
+        const observer = new MutationObserver(() => {
+            processPopups();
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
     }
 
+    // MEDIA
     function addAchievementsLinkToAppHubFriends() {
         const observer = new MutationObserver(() => {
             document.querySelectorAll('.apphub_friend_block').forEach(friendBlock => {
