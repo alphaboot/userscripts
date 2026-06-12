@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         [SH] Highlight Curator
-// @version      2.2
+// @version      3.0
 // @description  Highlight curated games on SteamHunters
 // @author       alphabetsoup
-// @match        https://steamhunters.com/games*
 // @match        https://steamhunters.com/*/games*
+// @match        https://steamhunters.com/games*
 // @match        https://steamhunters.com/dlc*
+// @match        https://steamhunters.com/apps*
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setValue
 // @grant        GM_getValue
@@ -18,18 +19,26 @@
 
     // Define curators with colors in one array
     const curators = [
-        { id: '31507748', name: 'Achievement Scouts', color: '#7aff0e' },
-        { id: '33207241', name: 'Achievement Scouts 2', color: '#7aff0e' },
-        { id: '33219357', name: 'Achievement Scouts 3', color: '#7aff0e' },
-        { id: '33219361', name: 'Achievement Scouts 4', color: '#7aff0e' },
-        { id: '34752873', name: 'Achievement Scouts Restricted', color: '#ff650c' },
-        { id: '35709504', name: 'Achievement Scouts Restricted 2', color: '#ff650c' },
-        { id: '35709530', name: 'Achievement Scouts Restricted 3', color: '#ff650c' },
-        { id: '35709536', name: 'Achievement Scouts Restricted 4', color: '#ff650c' },
-        { id: '44900522', name: 'Achievement Scouts Broken', color: '#dc1110' },
-        { id: '44900614', name: 'Achievement Scouts Broken Restricted', color: '#c76236' },
-        { id: '44900624', name: 'Achievement Scouts NSFW', color: '#a60bdb' },
-        { id: '44900660', name: 'Achievement Scouts NSFW Restricted', color: '#dc0dc5' }
+        { id: '31507748', name: 'Achievement Scouts', color: '#6CF302' },
+        { id: '33207241', name: 'Achievement Scouts 2', color: '#6CF302' },
+        { id: '33219357', name: 'Achievement Scouts 3', color: '#6CF302' },
+        { id: '33219361', name: 'Achievement Scouts 4', color: '#6CF302' },
+        { id: '33219363', name: 'Achievement Scouts 5', color: '#6CF302' },
+        { id: '34752873', name: 'Achievement Scouts Restricted', color: '#FF9300' },
+        { id: '35709530', name: 'Achievement Scouts Restricted 3', color: '#FF9300' },
+        { id: '35709504', name: 'Achievement Scouts Restricted 2', color: '#FF9300' },
+        { id: '35709536', name: 'Achievement Scouts Restricted 4', color: '#FF9300' },
+        { id: '44538292', name: 'Achievement Scouts Restricted 5', color: '#FF9300' },
+        { id: '44900522', name: 'Achievement Scouts Broken', color: '#F30502' },
+        { id: '44900614', name: 'Achievement Scouts Broken Restricted', color: '#CC6233' },
+        { id: '44900624', name: 'Achievement Scouts NSFW', color: '#A602F3' },
+        { id: '44900660', name: 'Achievement Scouts NSFW Restricted', color: '#F402D0' },
+        { id: '1647665620936852000', name: 'Demos Thread', color: '#6CF302' }, // 1647665620936852551
+        { id: '3091137796296033000', name: 'Easier Depots Thread', color: '#6CF302' }, // 3091137796296033364
+        { id: '3040480988276513000', name: 'Playtests Thread', color: '#6CF302' }, // 3040480988276513118
+        { id: '3454730619114631000', name: 'Removed Thread', color: '#6CF302' }, // 3454730619114631304
+        { id: '29354216', name: 'VR Achievement Hunters', color: '#6CF302' },
+        { id: '0', name: 'Internal (no store page)', color: '#939393' }
     ];
 
     const page_size = 500;
@@ -128,6 +137,44 @@
     }
 
     async function fetchCuratorData() {
+        let allData = [];
+        updateStatus(`Fetching curations data…`);
+        await new Promise((resolve) => {
+            GM_xmlhttpRequest({
+                method: "GET",
+                url: "https://achievement-scouts.com/api/alphaboot/curations.json",
+                onload: function(res) {
+                    try {
+                        const data = JSON.parse(res.responseText);
+                        if (Array.isArray(data)) {
+                            for (const rec of data) {
+                                if (rec.app_id != null && rec.clan_id != null) {
+                                    allData.push({
+                                        appid: rec.app_id,
+                                        curator: rec.clan_id
+                                    });
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.error("Parse error:", e);
+                    }
+                    resolve();
+                },
+                onerror: function(err) {
+                    console.error("Request failed:", err);
+                    resolve();
+                }
+            });
+        });
+        GM_setValue("curatorData", JSON.stringify(allData));
+        console.log("Stored curatorData:", allData);
+        updateStatus(`✅ Done! Stored ${allData.length} entries`);
+        setTimeout(() => { if (statusBox) statusBox.remove(); }, 5000);
+    }
+
+    /*
+    async function fetchCuratorData() {
         let allData = []; // clear old data
 
         for (const curator of curators) {
@@ -177,7 +224,7 @@
         updateStatus(`✅ Done! Stored ${allData.length} entries`);
         setTimeout(() => { if (statusBox) statusBox.remove(); }, 5000);
     }
-
+*/
 
     // Add the button when the page loads
     addHighlightButton();
