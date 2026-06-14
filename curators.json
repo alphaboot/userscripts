@@ -13,10 +13,10 @@
     { "id": "44900614", "name": "Achievement-Scouts: Broken Restricted", "color": "#CC6233" },
     { "id": "44900624", "name": "Achievement-Scouts: NSFW", "color": "#A602F3" },
     { "id": "44900660", "name": "Achievement-Scouts: NSFW Restricted", "color": "#F402D0" },
-    { "id": "1647665620936852000", "name": "Demos Thread", "color": "#6CF302" }, // 1647665620936852551
-    { "id": "3091137796296033000", "name": "Easier Depots Thread", "color": "#6CF302" }, // 3091137796296033364
-    { "id": "3040480988276513000", "name": "Playtests Thread", "color": "#6CF302" }, // 3040480988276513118
-    { "id": "3454730619114631000", "name": "Removed Thread", "color": "#6CF302" }, // 3454730619114631304
+    { "id": "1647665620936852000", "name": "Demos Thread", "color": "#6CF302", "_real": "1647665620936852551" },
+    { "id": "3091137796296033000", "name": "Easier Depots Thread", "color": "#6CF302", "_real": "3091137796296033364" },
+    { "id": "3040480988276513000", "name": "Playtests Thread", "color": "#6CF302", "_real": "3040480988276513118" },
+    { "id": "3454730619114631000", "name": "Removed Thread", "color": "#6CF302", "_real": "3454730619114631304" },
     { "id": "29354216", "name": "VR Achievement Hunters", "color": "#6CF302" },
     { "id": "0", "name": "Internal (no store page)", "color": "#939393" }
 ]
