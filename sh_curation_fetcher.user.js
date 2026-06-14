@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         [SH] AScouts Curation Fetcher
-// @version      3.0
+// @version      3.00
 // @description  Display curations on SteamHunters
 // @author       alphabetsoup
 // @match        https://steamhunters.com/apps/*
