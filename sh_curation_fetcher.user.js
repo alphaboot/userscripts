@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         [SH] AScouts Curation Fetcher
-// @version      2.8
+// @version      3.0
 // @description  Display curations on SteamHunters
 // @author       alphabetsoup
 // @match        https://steamhunters.com/apps/*
@@ -9,30 +9,13 @@
 // @grant        GM_xmlhttpRequest
 // @grant        GM_addStyle
 // @connect      store.steampowered.com
+// @connect      raw.githubusercontent.com
 // @updateURL    https://raw.githubusercontent.com/alphaboot/userscripts/main/sh_curation_fetcher.user.js
 // @downloadURL  https://raw.githubusercontent.com/alphaboot/userscripts/main/sh_curation_fetcher.user.js
 // ==/UserScript==
 
-(function() {
-    'use strict';
-
-    const predefinedCurators = [
-        { id: '31507748', name: 'Achievement Scouts' },
-        { id: '33207241', name: 'Achievement Scouts 2' },
-        { id: '33219357', name: 'Achievement Scouts 3' },
-        { id: '33219361', name: 'Achievement Scouts 4' },
-		{ id: '33219363', name: 'Achievement Scouts 5' },
-        { id: '34752873', name: 'Achievement Scouts: Restricted' },
-        { id: '35709504', name: 'Achievement Scouts: Restricted 2' },
-        { id: '35709530', name: 'Achievement Scouts: Restricted 3' },
-        { id: '35709536', name: 'Achievement Scouts: Restricted 4' },
-        { id: '44538292', name: 'Achievement Scouts: Restricted 5' },
-        { id: '44900522', name: 'Achievement-Scouts: Broken' },
-        { id: '44900614', name: 'Achievement-Scouts: Broken Restricted' },
-        { id: '44900624', name: 'Achievement-Scouts: NSFW' },
-        { id: '44900660', name: 'Achievement-Scouts: NSFW Restricted' },
-        { id: '29354216', name: 'VR Achievement Hunters ' }
-    ];
+(function () {
+    "use strict";
 
     const appIdMatch = window.location.pathname.match(/\/apps\/(\d+)\//);
     const appId = appIdMatch ? appIdMatch[1] : null;
@@ -49,81 +32,85 @@
     `);
 
     GM_xmlhttpRequest({
-        method: 'GET',
-        url: steamUrl,
-        onload: function(response) {
-            if (response.status === 200) {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(response.responseText, 'text/html');
-                const steamCuratorsBlock = doc.querySelector('.steam_curators_block');
+        method: "GET",
+        url: "https://raw.githubusercontent.com/alphaboot/userscripts/refs/heads/main/curators.json",
+        onload: function (curators) {
+            const predefinedCurators = JSON.parse(curators.responseText);
 
-                if (steamCuratorsBlock) {
-                    const links = steamCuratorsBlock.querySelectorAll('a[href*="/curator/"]');
+            GM_xmlhttpRequest({
+                method: "GET",
+                url: steamUrl,
+                onload: function (response) {
+                    if (response.status === 200) {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(response.responseText, "text/html");
+                        const steamCuratorsBlock = doc.querySelector(".steam_curators_block");
 
-                    links.forEach(link => {
-                        const url = new URL(link.href);
-                        const pathParts = url.pathname.split('/');
-                        const fullCuratorID = pathParts[2];
-                        const curatorID = fullCuratorID.split('-')[0];
+                        if (steamCuratorsBlock) {
+                            const links = steamCuratorsBlock.querySelectorAll('a[href*="/curator/"]');
 
-                        if (predefinedCurators.some(c => c.id === curatorID)) {
-                            const curatorUrl = `https://store.steampowered.com/app/${appId}/?curator_clanid=${curatorID}`;
+                            links.forEach((link) => {
+                                const url = new URL(link.href);
+                                const pathParts = url.pathname.split("/");
+                                const fullCuratorID = pathParts[2];
+                                const curatorID = fullCuratorID.split("-")[0];
 
-                            GM_xmlhttpRequest({
-                                method: 'GET',
-                                url: curatorUrl,
-                                onload: function(response) {
-                                    if (response.status === 200) {
-                                        const doc = parser.parseFromString(response.responseText, 'text/html');
-                                        const curatorDetail = doc.querySelector('.curator_detail_right_ctn');
+                                if (predefinedCurators.some((c) => c.id === curatorID)) {
+                                    GM_xmlhttpRequest({
+                                        method: "GET",
+                                        url: `https://store.steampowered.com/app/${appId}/?curator_clanid=${curatorID}`,
+                                        onload: function (response) {
+                                            if (response.status === 200) {
+                                                const doc = parser.parseFromString(response.responseText, "text/html");
+                                                const curatorDetail = doc.querySelector(".curator_detail_right_ctn");
 
-                                        if (curatorDetail) {
-                                            if (!curatorDetailFound) {
-                                                curatorDetailFound = true;
-                                                container = document.createElement('div');
-                                                container.id = 'curatorDetailContainer';
+                                                if (curatorDetail) {
+                                                    if (!curatorDetailFound) {
+                                                        curatorDetailFound = true;
+                                                        container = document.createElement("div");
+                                                        container.id = "curatorDetailContainer";
 
-                                                // Create the hide/show button
-                                                const toggleButton = document.createElement('button');
-                                                toggleButton.innerHTML = '<i class="fa fa-chevron-down" aria-hidden="true"></i>'; // Minimize icon
-                                                toggleButton.id = 'toggleButton';
-
-                                                // Create a wrapper for the curation content
-                                                const contentWrapper = document.createElement('div');
-                                                contentWrapper.id = 'curationContent';
-
-                                                toggleButton.addEventListener('click', () => {
-                                                    if (container.classList.contains('minimized')) {
-                                                        // Maximize content
-                                                        container.classList.remove('minimized');
+                                                        // Create the hide/show button
+                                                        const toggleButton = document.createElement("button");
                                                         toggleButton.innerHTML = '<i class="fa fa-chevron-down" aria-hidden="true"></i>'; // Minimize icon
-                                                        contentWrapper.style.display = '';
-                                                    } else {
-                                                        // Minimize content
-                                                        container.classList.add('minimized');
-                                                        toggleButton.innerHTML = '<i class="fa fa-chevron-up" aria-hidden="true"></i>'; // Maximize icon
-                                                        contentWrapper.style.display = 'none';
+                                                        toggleButton.id = "toggleButton";
+
+                                                        // Create a wrapper for the curation content
+                                                        const contentWrapper = document.createElement("div");
+                                                        contentWrapper.id = "curationContent";
+
+                                                        toggleButton.addEventListener("click", () => {
+                                                            if (container.classList.contains("minimized")) {
+                                                                // Maximize content
+                                                                container.classList.remove("minimized");
+                                                                toggleButton.innerHTML = '<i class="fa fa-chevron-down" aria-hidden="true"></i>'; // Minimize icon
+                                                                contentWrapper.style.display = "";
+                                                            } else {
+                                                                // Minimize content
+                                                                container.classList.add("minimized");
+                                                                toggleButton.innerHTML = '<i class="fa fa-chevron-up" aria-hidden="true"></i>'; // Maximize icon
+                                                                contentWrapper.style.display = "none";
+                                                            }
+                                                        });
+
+                                                        // Append the button and content wrapper to the container
+                                                        container.appendChild(toggleButton);
+                                                        container.appendChild(contentWrapper);
+
+                                                        // Add the container to the document body
+                                                        document.body.appendChild(container);
                                                     }
-                                                });
 
-                                                // Append the button and content wrapper to the container
-                                                container.appendChild(toggleButton);
-                                                container.appendChild(contentWrapper);
+                                                    // Append curatorDetail content without overwriting existing elements
+                                                    const curatorContent = document.createElement("div");
+                                                    curatorContent.innerHTML = curatorDetail.outerHTML;
+                                                    document.getElementById("curationContent").appendChild(curatorContent);
 
-                                                // Add the container to the document body
-                                                document.body.appendChild(container);
-                                            }
+                                                    let bodyWidth = document.body.getBoundingClientRect().width;
+                                                    let width = (document.querySelector(".container-table") || document.querySelector(".container")).getBoundingClientRect().width - (document.querySelector(".container-table") ? 0 : 30);
 
-                                            // Append curatorDetail content without overwriting existing elements
-                                            const curatorContent = document.createElement('div');
-                                            curatorContent.innerHTML = curatorDetail.outerHTML;
-                                            document.getElementById('curationContent').appendChild(curatorContent);
-
-                                            let bodyWidth = document.body.getBoundingClientRect().width;
-                                            let width = (document.querySelector('.container-table') || document.querySelector('.container')).getBoundingClientRect().width - (document.querySelector('.container-table') ? 0 : 30);
-
-                                            // Apply CSS after the content is added
-                                            GM_addStyle(`
+                                                    // Apply CSS after the content is added
+                                                    GM_addStyle(`
                                                 #curatorDetailContainer {
                                                     position: fixed;
                                                     bottom: 10px;
@@ -226,14 +213,16 @@
                                                     background-color: #666;
                                                 }
                                             `);
-                                        }
-                                    }
+                                                }
+                                            }
+                                        },
+                                    });
                                 }
                             });
                         }
-                    });
-                }
-            }
-        }
+                    }
+                },
+            });
+        },
     });
 })();
