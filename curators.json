@@ -1,17 +1,22 @@
 [
-    { "id": "31507748", "name": "Achievement Scouts" },
-    { "id": "33207241", "name": "Achievement Scouts 2" },
-    { "id": "33219357", "name": "Achievement Scouts 3" },
-    { "id": "33219361", "name": "Achievement Scouts 4" },
-    { "id": "33219363", "name": "Achievement Scouts 5" },
-    { "id": "34752873", "name": "Achievement Scouts: Restricted" },
-    { "id": "35709504", "name": "Achievement Scouts: Restricted 2" },
-    { "id": "35709530", "name": "Achievement Scouts: Restricted 3" },
-    { "id": "35709536", "name": "Achievement Scouts: Restricted 4" },
-    { "id": "44538292", "name": "Achievement Scouts: Restricted 5" },
-    { "id": "44900522", "name": "Achievement-Scouts: Broken" },
-    { "id": "44900614", "name": "Achievement-Scouts: Broken Restricted" },
-    { "id": "44900624", "name": "Achievement-Scouts: NSFW" },
-    { "id": "44900660", "name": "Achievement-Scouts: NSFW Restricted" },
-    { "id": "29354216", "name": "VR Achievement Hunters" }
+    { "id": "31507748", "name": "Achievement Scouts", color: "#6CF302" },
+    { "id": "33207241", "name": "Achievement Scouts 2", color: "#6CF302" },
+    { "id": "33219357", "name": "Achievement Scouts 3", color: "#6CF302" },
+    { "id": "33219361", "name": "Achievement Scouts 4", color: "#6CF302" },
+    { "id": "33219363", "name": "Achievement Scouts 5", color: "#6CF302" },
+    { "id": "34752873", "name": "Achievement Scouts: Restricted", color: "#FF9300" },
+    { "id": "35709504", "name": "Achievement Scouts: Restricted 2", color: "#FF9300" },
+    { "id": "35709530", "name": "Achievement Scouts: Restricted 3", color: "#FF9300" },
+    { "id": "35709536", "name": "Achievement Scouts: Restricted 4", color: "#FF9300" },
+    { "id": "44538292", "name": "Achievement Scouts: Restricted 5", color: "#FF9300" },
+    { "id": "44900522", "name": "Achievement-Scouts: Broken", color: "#F30502" },
+    { "id": "44900614", "name": "Achievement-Scouts: Broken Restricted", color: "#CC6233" },
+    { "id": "44900624", "name": "Achievement-Scouts: NSFW", color: "#A602F3" },
+    { "id": "44900660", "name": "Achievement-Scouts: NSFW Restricted", color: "#F402D0" },
+    { "id": "1647665620936852000", name: "Demos Thread", color: "#6CF302" }, // 1647665620936852551
+    { "id": "3091137796296033000", name: "Easier Depots Thread", color: "#6CF302" }, // 3091137796296033364
+    { "id": "3040480988276513000", name: "Playtests Thread", color: "#6CF302" }, // 3040480988276513118
+    { "id": "3454730619114631000", name: "Removed Thread", color: "#6CF302" }, // 3454730619114631304
+    { "id": "29354216", name: "VR Achievement Hunters", color: "#6CF302" },
+    { "id": "0", name: "Internal (no store page)", color: "#939393" }
 ]
