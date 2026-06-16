@@ -6,6 +6,9 @@ on:
     - cron: '0 0 * * *'  # Runs at midnight UTC every day
   workflow_dispatch:       # Also allows manual runs
 
+permissions:
+  contents: write
+
 jobs:
   download:
     runs-on: ubuntu-latest
