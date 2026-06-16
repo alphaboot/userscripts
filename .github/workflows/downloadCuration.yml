@@ -20,13 +20,7 @@ jobs:
 
       - name: Download file
         run: |
-          curl -L \
-            -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0" \
-            -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
-            -H "Referer: https://achievement-scouts.com/" \
-            -H "Accept-Language: en-US,en;q=0.9" \
-            -H "Accept-Encoding: gzip, deflate, br, zstd" \
-            "https://achievement-scouts.com/api/alphaboot/curations.json" -o "curations.json"
+          curl -L "https://achievement-scouts.com/api/alphaboot/curations.json" -o "curations.json"
 
       - name: Commit and push if changed
         run: |
