@@ -1,5 +1,5 @@
 # .github/workflows/daily-download.yml
-name: Daily File Download
+name: Daily Curation Backup
 
 on:
   schedule:
