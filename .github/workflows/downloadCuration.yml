@@ -18,7 +18,7 @@ jobs:
 
       - name: Download file
         run: |
-          curl -L "https://achievement-scouts.com/api/alphaboot/curations.json" -o "curations.json"
+          curl -L "https://achievement-scouts.com/api/alphaboot/curations.json" -o "userscripts/curations.json"
 
       - name: Commit and push if changed
         run: |
