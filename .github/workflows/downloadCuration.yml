@@ -20,7 +20,9 @@ jobs:
 
       - name: Download file
         run: |
-          curl -L "https://achievement-scouts.com/api/alphaboot/curations.json" -o "curations.json"
+          curl -L \
+            -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
+            "https://achievement-scouts.com/api/alphaboot/curations.json" -o "curations.json"
 
       - name: Commit and push if changed
         run: |
