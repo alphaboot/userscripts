@@ -20,7 +20,19 @@ jobs:
 
       - name: Download file
         run: |
-          curl -L "https://achievement-scouts.com/api/alphaboot/curations.json" -o "curations.json"
+          npx playwright install chromium --with-deps
+          node -e "
+            const { chromium } = require('playwright');
+            (async () => {
+              const browser = await chromium.launch();
+              const page = await browser.newPage();
+              await page.goto('https://achievement-scouts.com/api/alphaboot/curations.json');
+              await page.waitForTimeout(5000);
+              const content = await page.content();
+              require('fs').writeFileSync('curations.json', content);
+              await browser.close();
+            })();
+          "
 
       - name: Commit and push if changed
         run: |
