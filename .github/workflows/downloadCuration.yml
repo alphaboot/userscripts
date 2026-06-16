@@ -1,0 +1,29 @@
+# .github/workflows/daily-download.yml
+name: Daily File Download
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs at midnight UTC every day
+  workflow_dispatch:       # Also allows manual runs
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Download file
+        run: |
+          curl -L "https://achievement-scouts.com/api/alphaboot/curations.json" -o "curations.json"
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/file.csv
+          git diff --cached --quiet || git commit -m "chore: daily file update $(date -u +%Y-%m-%d)"
+          git push
