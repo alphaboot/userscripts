@@ -2,6 +2,7 @@
 // @name         [SH] Copy Achievement Text
 // @version      2.00
 // @description  Copy api names or achievement names and descriptions to clipboard with a button
+// @author       alphabetsoup
 // @match        https://steamhunters.com/*/achievements*
 // @grant        none
 // @updateURL    https://raw.githubusercontent.com/alphaboot/userscripts/main/sh_copy_achievement_text.user.js
