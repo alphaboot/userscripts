@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         [SH] Copy Achievement Text
-// @version      1.1
+// @version      2.00
 // @description  Copy api names or achievement names and descriptions to clipboard with a button
 // @match        https://steamhunters.com/*/achievements*
 // @grant        none
