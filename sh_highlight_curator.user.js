@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         [SH] Highlight Curator
-// @version      3.01
+// @version      3.02
 // @description  Highlight curated games on SteamHunters
 // @author       alphabetsoup
 // @match        https://steamhunters.com/*/games*
