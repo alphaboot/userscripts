@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         [SH] Show AppIDs and SteamIDs
-// @version      2.1
+// @version      2.2
 // @description  Display AppID and SteamIDs on game and user pages
 // @author       alphabetsoup
 // @match        https://steamhunters.com/*
 // @grant        none
+// @run-at       document-end
 // @updateURL    https://raw.githubusercontent.com/alphaboot/userscripts/main/sh_show_appid_steamid.user.js
 // @downloadURL  https://raw.githubusercontent.com/alphaboot/userscripts/main/sh_show_appid_steamid.user.js
 // ==/UserScript==
