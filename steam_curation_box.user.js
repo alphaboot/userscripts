@@ -17,11 +17,6 @@
   const CURATORS_JSON_URL =
     "https://raw.githubusercontent.com/alphaboot/userscripts/main/curators.json";
 
-  // ---------------------------------------------------------------------
-  // Sidebar width: computed once, then kept in sync via a CSS variable so
-  // resizes don't require rebuilding the whole stylesheet.
-  // ---------------------------------------------------------------------
-
   function computeSidebarWidth() {
     const bodyWidth = document.body.getBoundingClientRect().width;
     const titleArea = document.querySelector(
@@ -340,9 +335,6 @@
     return curatorElement;
   }
 
-  // Builds and inserts the #curatorContentBox from a NodeList of
-  // [data-featuretarget="referring-curator-review"] elements. Shared by
-  // both the "already on the page" and "fetched a fresh copy" code paths.
   function renderCuratorBox(referringCurators) {
     const existingBox = document.getElementById("curatorContentBox");
     if (existingBox) {
@@ -375,9 +367,6 @@
   }
 
   function fetchCuratorContent(curatorClanId) {
-    // If the currently-loaded page was already requested with this exact
-    // curator_clanid, the review data is already in the DOM — skip the
-    // network round-trip entirely.
     const currentParams = new URLSearchParams(window.location.search);
     if (currentParams.get("curator_clanid") === String(curatorClanId)) {
       const referringCurators = document.querySelectorAll(
@@ -439,8 +428,6 @@
 
     document.body.appendChild(select);
 
-    // Automatically fetch and display content for the first predefined
-    // curator that's actually present on this page.
     const predefinedInExtracted = predefinedCurators.find((predefined) =>
       options.some((extracted) => extracted.id === predefined.id),
     );
@@ -456,8 +443,6 @@
     const hasCuratorClanId = urlParams.has("curator_clanid");
 
     if (hasCuratorClanId) {
-      // The curator_clanid param changes what the page renders, so fetch a
-      // clean copy of the base page to get the full curator list.
       const baseUrl = window.location.href.split("?")[0];
       console.log("Fetching base URL from:", baseUrl);
 
