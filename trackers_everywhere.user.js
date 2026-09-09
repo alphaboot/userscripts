@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Trackers Everywhere
+// @name         Trackers Everywhere***
 // @namespace    https://completionist.me/tools
 // @icon         https://completionist.me/images/completionist-logo-120.png
-// @version      2.40.0
+// @version      2.50.0
 // @description  Trackers Everywhere integration
 // @author       luchaos
 // @match        https://completionist.me/steam/*
@@ -17,15 +17,15 @@
 // @match        http://retroachievements.org/*
 // @match        https://retroachievements.org/*
 // @supportUrl   https://completionist.me/feedback
-// @updateURL    https://completionist.me/userscript/trackers.user.js
-// @downloadURL  https://completionist.me/userscript/trackers.user.js
+// @updateURL    https://raw.githubusercontent.com/alphaboot/userscripts/main/trackers_everywhere.user.js
+// @downloadURL  https://raw.githubusercontent.com/alphaboot/userscripts/main/trackers_everywhere.user.js
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js
 // @require      https://peterolson.github.io/BigInteger.js/BigInteger.min.js
 // @run-at       document-end
 // ==/UserScript==
 
 'use strict'
-var version = '2.40.0'
+var version = '2.50.0'
 var url = new URL(window.location.href.toLowerCase())
 var fragment = url.pathname.match(/([^\/]*)\/*$/)[1]
 var fragments = url.pathname.split('/')
@@ -172,13 +172,24 @@ var steamCommunity = (function () {
     profileId = userInstanceProfileId
   }
 
-  var fragment = fragments[1] === 'app' ? 'app' : fragment
+  var isWorkshopItem = fragments[1] === 'sharedfiles' && fragments[2] === 'filedetails'
+  var fragment = fragments[1] === 'app' ? 'app' : (isWorkshopItem ? 'workshop' : fragment)
   var resourceMap = {
     'app': 'app',
+    'workshop': 'app',
     'games': 'profile-apps',
     'wishlist': 'profile-apps'
   }
   var resource = resourceMap[fragment] || 'profile'
+
+  var getWorkshopAppId = function () {
+    var href = $('.breadcrumbs a[href*="/app/"]').first().attr('href')
+    if (href) {
+      var m = href.match(/\/app\/(\d+)/)
+      if (m) return m[1]
+    }
+    return null
+  }
 
   var inject = function (provider) {
     var providerKey = provider.id + '-' + id
@@ -188,7 +199,11 @@ var steamCommunity = (function () {
     provider.banner()
     switch (resource) {
       case 'app':
-        provider.params({appId: fragments[2]})
+        var communityAppId = isWorkshopItem ? getWorkshopAppId() : fragments[2]
+        if (!communityAppId) {
+          break
+        }
+        provider.params({appId: communityAppId})
         injectHubHeaderAppLink(provider)
         break
       case 'profile':
