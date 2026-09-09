@@ -2,7 +2,7 @@
 // @name         Trackers Everywhere
 // @namespace    https://completionist.me/tools
 // @icon         https://completionist.me/images/completionist-logo-120.png
-// @version      2.10.0
+// @version      2.40.0
 // @description  Trackers Everywhere integration
 // @author       luchaos
 // @match        https://completionist.me/steam/*
@@ -25,7 +25,7 @@
 // ==/UserScript==
 
 'use strict'
-var version = '2.10.0'
+var version = '2.40.0'
 var url = new URL(window.location.href.toLowerCase())
 var fragment = url.pathname.match(/([^\/]*)\/*$/)[1]
 var fragments = url.pathname.split('/')
@@ -1737,6 +1737,99 @@ const steamhunters = function () {
   }
 }()
 
+const ascouts = function () {
+
+  const id = 'ascouts'
+  const name = 'Achievement Scouts'
+  const iconUrl = 'data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDU1MyA1MTkiIHdpZHRoPSI1NTMiIGhlaWdodD0iNTE5Ij4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYSIgeDI9IjEiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiBncmFkaWVudFRyYW5zZm9ybT0ibWF0cml4KDM5NSAtMjI3IDI2MS4xMDEgNDU0LjMzOSA0Ny41IDQ1MykiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiM2Y2YzMDIiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIuNjk4IiBzdG9wLWNvbG9yPSIjODhmMzU3Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2JiZjBhOSIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNIDI4OC43NDEgMi43NTAgTCAyODcuMTcyIDQuNTAwIDI3My41MTQgMjYuNTAwIEwgMjU5Ljg1NyA0OC41MDAgMjQyLjQyOCA4My4zMjcgTCAyMjUgMTE4LjE1MyAyMjUgMTE5LjM3NyBMIDIyNSAxMjAuNjAwIDIzOC4zODAgMTQyLjY1NSBMIDI1MS43NjAgMTY0LjcxMSAyMzguNjMwIDE2NS4yODUgTCAyMjUuNTAwIDE2NS44NTkgMjE4LjUwMCAxNjguMDQ0IEwgMjExLjUwMCAxNzAuMjMwIDIwNiAxNzMuMDI0IEwgMjAwLjUwMCAxNzUuODE4IDE5Ni4wOTggMTc4Ljc5OSBMIDE5MS42OTYgMTgxLjc3OSAxODQuMjcwIDE4OS4xNDAgTCAxNzYuODQzIDE5Ni41MDAgMTcxLjgwMCAyMDQgTCAxNjYuNzU2IDIxMS41MDAgMTQ4Ljk3NCAyNDcuMTgyIEwgMTMxLjE5MSAyODIuODY0IDEyOS41NDQgMjkwLjEwOCBMIDEyNy44OTYgMjk3LjM1MiAxMjcuMjk1IDMxMC42NDkgTCAxMjYuNjk0IDMyMy45NDYgMTEzLjExOCAzMjQuMjIzIEwgOTkuNTQyIDMyNC41MDAgOTUuNjk5IDMzMS41MDAgTCA5MS44NTUgMzM4LjUwMCA3NC4yOTcgMzcxIEwgNTYuNzM4IDQwMy41MDAgNDMuMzE1IDQyNy44MDUgTCAyOS44OTMgNDUyLjExMSAxNC44OTkgNDgyLjI2OSBMIC0wLjA5NSA1MTIuNDI4IDAuMjAzIDUxNS40NjQgTCAwLjUwMCA1MTguNTAwIDE1MC41MDAgNTE4LjUwMCBMIDMwMC41MDAgNTE4LjUwMCAzMTAuNTAwIDUxNS43NDkgTCAzMjAuNTAwIDUxMi45OTggMzI4Ljg4OCA1MDguOTc5IEwgMzM3LjI3NiA1MDQuOTYwIDM0My41ODkgNDk4LjUyMSBMIDM0OS45MDIgNDkyLjA4MyAzNjguNDQ4IDQ1NS4wNzcgTCAzODYuOTk0IDQxOC4wNzEgMzg5LjM2MCA0MDkuODc2IEwgMzkxLjcyNiA0MDEuNjgyIDM5NS43MzIgNDA4LjU5MSBMIDM5OS43MzkgNDE1LjUwMCA0MTIuMDA0IDQzNyBMIDQyNC4yNjggNDU4LjUwMCA0NDEuNzQ3IDQ4OC4yNjQgTCA0NTkuMjI2IDUxOC4wMjkgNDg5LjM2MyA1MTcuNzY0IEwgNTE5LjUwMCA1MTcuNTAwIDUzNi4yMDAgNDg0LjUwMCBMIDU1Mi45MDAgNDUxLjUwMCA1NTIuOTUwIDQ0OS4zMTIgTCA1NTMgNDQ3LjEyNCA1NDUuMTIxIDQzMy4zMTIgTCA1MzcuMjQyIDQxOS41MDAgNTE5LjM3MSAzODkuNDQ3IEwgNTAxLjUwMCAzNTkuMzk0IDQ2OS41MDAgMzA0LjIxOCBMIDQzNy41MDAgMjQ5LjA0MSA0MTUuNzUwIDI0OS4wMjEgTCAzOTQgMjQ5IDM5NCAyNDguNDkwIEwgMzk0IDI0Ny45ODAgNDAzLjQ0MCAyMjkuMTE5IEwgNDEyLjg4MCAyMTAuMjU5IDQxMi4yNzAgMjA3Ljg3OSBMIDQxMS42NjAgMjA1LjUwMCAzOTUuMjAyIDE3NyBMIDM3OC43NDUgMTQ4LjUwMCAzNjkuODE2IDEzMi41MDAgTCAzNjAuODg4IDExNi41MDAgMzI3LjI0NSA1OC43NTAgTCAyOTMuNjAzIDEgMjkxLjk1NiAxIEwgMjkwLjMxMCAxIDI4OC43NDEgMi43NTAgTSAyMjEuMTEzIDI3OC42MzcgTCAyMjIuNDcyIDI4MC4yNzMgMjI2Ljk4NiAyODIuMzUyIEwgMjMxLjUwMCAyODQuNDMxIDI4Ni41MDAgMjg1LjA2NCBMIDM0MS41MDAgMjg1LjY5NyAzNDkuMTE5IDI4Ny42ODAgTCAzNTYuNzM3IDI4OS42NjIgMzU5Ljg1OSAyODMuMzMxIEwgMzYyLjk4MSAyNzcgMjkxLjM2OCAyNzcgTCAyMTkuNzU1IDI3NyAyMjEuMTEzIDI3OC42MzcgTSAxMzIuODE3IDM4NS4xNzYgTCAxMjQuMjEyIDQwMiAyMTEuMzU2IDQwMS44OTUgTCAyOTguNTAwIDQwMS43OTAgMjk0LjUwMCA0MDAuNDcyIEwgMjkwLjUwMCAzOTkuMTU0IDI0Ni41MDAgMzk5LjAyNiBMIDIwMi41MDAgMzk4Ljg5OCAxOTIgMzk4LjAzNiBMIDE4MS41MDAgMzk3LjE3NSAxNzUuNzk0IDM5NS4yMzYgTCAxNzAuMDg5IDM5My4yOTggMTY0LjUxNiAzODkuOTIxIEwgMTU4Ljk0MyAzODYuNTQzIDE1My44NDggMzgyLjA4NiBMIDE0OC43NTMgMzc3LjYyOSAxNDUuMDg3IDM3Mi45OTEgTCAxNDEuNDIxIDM2OC4zNTMgMTMyLjgxNyAzODUuMTc2IiBmaWxsPSIjMDAwMDAwIi8+CiAgPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNMjkwLjI4LjI0Yy40Ny0uNjMgMi45My4wNCAzLjU0IDEuMDlsMjAuOTEgMzUuNTZMMzUxIDk5LjE1bDExLjgyIDIwLjQ3IDEzLjkxIDI1LjA2IDMyLjMzIDU1Ljk1YzEuOTIgMy4zMSA0LjIxIDUuOSAyLjQ4IDEwLjI4bC0xNzMuMTIuMThjLTEwLjc5IDAtMjAuNTggNy4wNy0yNS4zIDE1Ljg1LTQuMzUgOC4xLTQuNjcgMzQuMTMuNDUgNDIuOTYgNC40NiA3LjY4IDE0LjA3IDEzLjk5IDIzLjY4IDE0LjA1bDg4LjMxLjQ0YzI0LjMyLjEyIDUwLjk5IDYuODQgNjEuMjEgMzAuOTYgNC4xMSA5LjcgNi4yNSAxOS45NCA2LjcyIDMwLjU3Ljk1IDIxLjg2IDEuMjcgNTMuMjctOC4zNSA3My4xLTguNDIgMTcuMzYtMjQuNDUgMjYuMjUtNDIuOTIgMzAuMjgtNi45OCAxLjUzLTE0LjE5IDMuNS0yMS44MyAzLjVsLTI4NS45My4yYy0yLjY1LTMuMTQtMS4xOS02LjIzLjQ3LTkuMjNsMjYuOTEtNDguODZ2LS4wNGwyNy4yOS01MC43NCAxMS40Ny0yMC45IDU3LjEyLS4yNGMuNzEgMCAyLjM0LjY4IDIuNzggMS4xMS40NS40My4yMiAyLjQ2LS4xMiAzLjA0bC0yNi42IDQ2LjQyLTE0LjEyIDI1LjgxYy0uNTEuOTQgMi4xMSAyLjMyIDMuMDUgMi4zMmwyMDEuMjgtLjE5YzguODQgMCAxNi4zOC02LjM5IDE4LjM1LTE0LjM5IDMtMTIuMTQgMy41LTI1IC44Ny0zNy40Ny0yLjE5LTEwLjQ2LTEyLjY1LTE2LjgxLTIzLjMtMTYuODlsLTk0LjY2LS43MWMtNy40MS0uMDYtMTUuNzctMi40My0yMi4xMS01LjU2LTI5LjQ3LTE0LjU4LTQ0LjAzLTQ1LjQ0LTQyLjctNzcuMzEuNi0xNC42MS45Mi0yNy40OCA4LjQtNDAuMTcgOS44LTE2LjY1IDIyLjgxLTMwLjU5IDQwLjkxLTM4LjQ2IDcuNzMtMy4zNiAxNS42OC01LjczIDI0LjQ2LTUuNzNsODkuOTItLjExYy01LjIzLTkuNzctOS43Ny0xOS4wNS0xNS40Ni0yOC4yM2wtMjguNzYtNDYuNDMtMjEuNzQtMzUuODdjLjg5LTMuNDkgMi45Mi03LjA0IDQuODMtMTAuMWwxMi42Ni0yMC40NiAxMy4xNi0yMS4yNmMuNDctLjc3IDEuMTItMS42NSAxLjQ2LTIuMTFtMTk5LjUxIDMzOC43MyAyMy40MSA0MC4xNCA5LjQ0IDE1LjYgMTYuNDcgMjcuNyAxMy4zNyAyMy42NmMuNTUuOTguMzMgMy44NS0uNDUgNC41LS43Ny42Ni0yLjg0IDEuMy00LjE0IDEuM2wtNTUuMzMtLjAyLTI3Ljg5LTQ3LjQyLTMzLjcyLTU4LjY2LTUyLjA0LTkxLjVjLS43NS0yLjE0LTEuMjgtMy43NS0xLjY4LTYuMThsNTkuNy0uMDR6IiBzdHlsZT0iZmlsbDp1cmwoI2EpIi8+Cjwvc3ZnPgo='
+  let _appId, _gameId, _profileId, _resource
+
+  const params = function (params) {
+    _appId = params && params.appId
+    _gameId = params && params.gameId
+    _profileId = params && params.profileId
+    _resource = params && params.resource
+  }
+
+  const banner = function () {
+    // console.log("%c   ", "font-size:57px;background-image:url(" + iconUrl + ");background-size:contain;background-repeat:no-repeat;background-position:center");
+    console.log('%c ' + name + ' %c Userscript v' + version + ' ', 'font-size:11px;color:#000000;background:#40A2A5;padding:1px;border-radius:3px 0 0 3px;', 'font-size:11px;color:#FFF;background:#111;padding:1px;border-radius:0 3px 3px 0;')
+  }
+
+  const steamAppLink = function (appId, profileId) {
+    const linkProfileId = profileId || _profileId
+    return 'https://achievement-scouts.com/apps/' + (appId || _appId) + '?utm_campaign=userscript'
+  }
+
+  const steamProfileLink = function (profileId) {
+    const linkProfileId = profileId || _profileId
+    return 'https://achievement-scouts.com/' + (linkProfileId ? 'users/' + linkProfileId : '') + '?utm_campaign=userscript'
+  }
+
+  const icon = function (size) {
+    const iconSize = size || 16
+    return '<i class="" style="display:inline-block;width:' + iconSize + 'px;height:' + iconSize + 'px;vertical-align:middle;background-image:url(' + iconUrl + ');background-size: ' + iconSize + 'px ' + iconSize + 'px;"></i>'
+  }
+
+  return {
+    id: id,
+    name: name,
+    iconUrl: iconUrl,
+    banner: banner,
+    icon: icon,
+    params: params,
+    steamAppLink: steamAppLink,
+    steamProfileLink: steamProfileLink,
+  }
+}()
+
+const store = function () {
+
+  const id = 'store'
+  const name = 'Steam Store'
+  const iconUrl = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMzMgMjMzIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImEiIHgyPSI1MCUiIHgxPSI1MCUiIHkyPSIxMDAlIj48c3RvcCBzdG9wLWNvbG9yPSIjMTExRDJFIiBvZmZzZXQ9IjAiLz48c3RvcCBzdG9wLWNvbG9yPSIjMDUxODM5IiBvZmZzZXQ9Ii4yMTIiLz48c3RvcCBzdG9wLWNvbG9yPSIjMEExQjQ4IiBvZmZzZXQ9Ii40MDciLz48c3RvcCBzdG9wLWNvbG9yPSIjMTMyRTYyIiBvZmZzZXQ9Ii41ODEiLz48c3RvcCBzdG9wLWNvbG9yPSIjMTQ0QjdFIiBvZmZzZXQ9Ii43MzgiLz48c3RvcCBzdG9wLWNvbG9yPSIjMTM2NDk3IiBvZmZzZXQ9Ii44NzMiLz48c3RvcCBzdG9wLWNvbG9yPSIjMTM4N0I4IiBvZmZzZXQ9IjEiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cGF0aCBmaWxsPSJ1cmwoI2EpIiBkPSJNNC44OTEgMTUwLjAxQzE5LjI4NCAxOTguMDIgNjMuODA3IDIzMyAxMTYuNTAxIDIzM2M2NC4zNCAwIDExNi41LTUyLjE2IDExNi41LTExNi41IDAtNjQuMzQxLTUyLjE2LTExNi41LTExNi41LTExNi41QzU0Ljc2MSAwIDQuMjQxIDQ4LjAyOS4yNTEgMTA4Ljc2YzcuNTQgMTIuNjYgMTAuNDgxIDIwLjQ5IDQuNjQxIDQxLjI1eiIvPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0xMTAuNSA4Ny4zMjJjMCAuMTk2IDAgLjM5Mi4wMS41NzZMODIuMDAyIDEyOS4zMWMtNC42MTgtLjIxLTkuMjUyLjYtMTMuNjQ2IDIuNDFhMzEuNjk4IDMxLjY5OCAwIDAgMC01LjQ1NSAyLjg4TC4zMDIgMTA4Ljgzcy0xLjQ0OCAyMy44MyA0LjU4OCA0MS41OWw0NC4yNTQgMTguMjZjMi4yMjIgOS45MyA5LjAzNCAxOC42NCAxOS4wODQgMjIuODMgMTYuNDQzIDYuODcgMzUuNDAyLS45NiA0Mi4yNDItMTcuNDEgMS43OC00LjMgMi42MS04LjgxIDIuNDktMTMuMzFsNDAuNzktMjkuMTVjLjMzLjAxLjY3LjAyIDEgLjAyIDI0LjQxIDAgNDQuMjUtMTkuOSA0NC4yNS00NC4zMzhDMTk5IDYyLjg4MiAxNzkuMTYgNDMgMTU0Ljc1IDQzYy0yNC40IDAtNDQuMjUgMTkuODgyLTQ0LjI1IDQ0LjMyMnptLTYuODQgODMuOTE4Yy01LjI5NCAxMi43MS0xOS45IDE4Ljc0LTMyLjU5NiAxMy40NS01Ljg1Ny0yLjQ0LTEwLjI3OS02LjkxLTEyLjgzLTEyLjI0bDE0LjQwNSA1Ljk3YzkuMzYzIDMuOSAyMC4xMDUtLjU0IDIzLjk5Ny05LjkgMy45MDQtOS4zNy0uNTI1LTIwLjEzLTkuODgzLTI0LjAzbC0xNC44OTEtNi4xN2M1Ljc0Ni0yLjE4IDEyLjI3OC0yLjI2IDE4LjM4MS4yOCA2LjE1MyAyLjU2IDEwLjkyNyA3LjM4IDEzLjQ1NyAxMy41NHMyLjUyIDEyLjk2LS4wNCAxOS4xbTUxLjA5LTU0LjM4Yy0xNi4yNSAwLTI5LjQ4LTEzLjI1LTI5LjQ4LTI5LjUzOCAwLTE2LjI3NSAxMy4yMy0yOS41MjkgMjkuNDgtMjkuNTI5IDE2LjI2IDAgMjkuNDkgMTMuMjU0IDI5LjQ5IDI5LjUyOSAwIDE2LjI4OC0xMy4yMyAyOS41MzgtMjkuNDkgMjkuNTM4bS0yMi4wOS0yOS41ODNjMC0xMi4yNTMgOS45Mi0yMi4xOTEgMjIuMTQtMjIuMTkxIDEyLjIzIDAgMjIuMTUgOS45MzggMjIuMTUgMjIuMTkxIDAgMTIuMjU0LTkuOTIgMjIuMTgzLTIyLjE1IDIyLjE4My0xMi4yMiAwLTIyLjE0LTkuOTI5LTIyLjE0LTIyLjE4M3oiLz48L3N2Zz4='
+  let _appId, _gameId, _profileId, _resource
+
+  const params = function (params) {
+    _appId = params && params.appId
+    _gameId = params && params.gameId
+    _profileId = params && params.profileId
+    _resource = params && params.resource
+  }
+
+  const banner = function () {
+    // console.log("%c   ", "font-size:57px;background-image:url(" + iconUrl + ");background-size:contain;background-repeat:no-repeat;background-position:center");
+    console.log('%c ' + name + ' %c Userscript v' + version + ' ', 'font-size:11px;color:#000000;background:#40A2A5;padding:1px;border-radius:3px 0 0 3px;', 'font-size:11px;color:#FFF;background:#111;padding:1px;border-radius:0 3px 3px 0;')
+  }
+
+  const steamAppLink = function (appId, profileId) {
+    const linkProfileId = profileId || _profileId
+    return 'https://store.steampowered.com/app/' + (appId || _appId) + '?utm_campaign=userscript'
+  }
+
+  const steamProfileLink = function (profileId) {
+    return null
+    // const linkProfileId = profileId || _profileId
+    // return 'https://store.steampowered.com/' + (linkProfileId ? 'users/' + linkProfileId : '') + '?utm_campaign=userscript'
+  }
+
+  const icon = function (size) {
+    const iconSize = size || 16
+    return '<i class="" style="display:inline-block;width:' + iconSize + 'px;height:' + iconSize + 'px;vertical-align:middle;background-image:url(' + iconUrl + ');background-size: ' + iconSize + 'px ' + iconSize + 'px;"></i>'
+  }
+
+  return {
+    id: id,
+    name: name,
+    iconUrl: iconUrl,
+    banner: banner,
+    icon: icon,
+    params: params,
+    steamAppLink: steamAppLink,
+    steamProfileLink: steamProfileLink,
+  }
+}()
+
 switch (url.hostname) {
   case 'astats.astats.nl':
     astats.enhance()
@@ -1858,3 +1951,17 @@ switch (url.hostname) {
     break
 }
 
+switch (url.hostname) {
+  case 'store.steampowered.com':
+    steamStore.inject(ascouts)
+    break
+  case 'steamcommunity.com':
+    steamCommunity.inject(ascouts)
+    break
+}
+
+switch (url.hostname) {
+  case 'steamdb.info':
+    steamdb.inject(ascouts)
+    break
+}
