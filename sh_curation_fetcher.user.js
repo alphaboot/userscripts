@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         [SH] AScouts Curation Fetcher
-// @version      4.00
+// @version      4.01
 // @description  Display curations on SteamHunters
 // @author       alphabetsoup
 // @match        https://steamhunters.com/apps/*
@@ -202,6 +202,7 @@
         flex-direction: row;
         align-items: baseline;
         flex-wrap: wrap;
+        gap: 4px;
       }
 
       #curatorDetailContainer .curator_name {
