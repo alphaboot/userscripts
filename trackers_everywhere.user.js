@@ -2,7 +2,7 @@
 // @name         Trackers Everywhere***
 // @namespace    https://completionist.me/tools
 // @icon         https://completionist.me/images/completionist-logo-120.png
-// @version      2.50.0
+// @version      2.60.0
 // @description  Trackers Everywhere integration
 // @author       luchaos
 // @match        https://completionist.me/steam/*
@@ -16,7 +16,6 @@
 // @match        https://steamdb.info/calculator/*
 // @match        http://retroachievements.org/*
 // @match        https://retroachievements.org/*
-// @supportUrl   https://completionist.me/feedback
 // @updateURL    https://raw.githubusercontent.com/alphaboot/userscripts/main/trackers_everywhere.user.js
 // @downloadURL  https://raw.githubusercontent.com/alphaboot/userscripts/main/trackers_everywhere.user.js
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js
@@ -1413,6 +1412,72 @@ const cme = function () {
     banner()
   }
 
+  const detectParams = function () {
+    const path = url.pathname // already lowercased globally
+    const profileMatch = path.match(/\/profile\/(\d+)/)
+    const appMatch = path.match(/\/app\/(\d+)/)
+    _profileId = profileMatch ? profileMatch[1] : null
+    _appId = appMatch ? appMatch[1] : null
+  }
+
+  const injectIconStyle = function () {
+    if ($('#userscript-ascouts-icon-style').length) {
+      return
+    }
+    $('head').append(
+      '<style id="userscript-ascouts-icon-style">' +
+      '.icon-ascouts {' +
+      '  height: 1em;' +
+      '  background-image: url(' + ascouts.iconUrl + ');' +
+      '  background-size: 70% auto;' +
+      '  background-repeat: no-repeat;' +
+      '  background-position: center;' +
+      '  vertical-align: -0.125em;' +
+      '  margin-right: 0.2em;' +
+      '}' +
+      '</style>'
+    )
+  }
+
+  const inject = function (provider) {
+    const providerKey = provider.id + '-' + id
+    if ($('head meta[content="' + providerKey + '"]').length) {
+      return
+    }
+    detectParams()
+
+    let providerLink
+    if (_appId) {
+      providerLink = provider.steamAppLink(_appId, _profileId)
+    } else if (_profileId) {
+      providerLink = provider.steamProfileLink(_profileId)
+    }
+
+    if (!providerLink) {
+      return
+    }
+
+    if (provider.id === 'ascouts') {
+      injectIconStyle()
+    }
+
+    const $newItem = $('<li><a href="' + providerLink + '" target="_blank">' +
+      '<i class="icon-fw icon-' + provider.id + '"></i>' +
+      '<span class="menu-item-label">' + provider.name + '</span>' +
+      '</a></li>')
+
+    const $profilesNav = $('.nav-label')
+      .filter(function () {
+        return $(this).find('.menu-item-label').text().trim() === 'Profiles'
+      })
+      .nextAll('ul.nav')
+      .first()
+
+    $profilesNav.append($newItem)
+
+    $('head').append('<meta name="userscript" content="' + providerKey + '">')
+  }
+
   return {
     id: id,
     name: name,
@@ -1421,6 +1486,7 @@ const cme = function () {
     icon: icon,
     params: params,
     register: register,
+    inject: inject,
     retroGameLink: retroGameLink,
     retroProfileLink: retroProfileLink,
     steamAppLink: steamAppLink,
@@ -1845,138 +1911,38 @@ const store = function () {
   }
 }()
 
-switch (url.hostname) {
-  case 'astats.astats.nl':
-    astats.enhance()
-    break
+// which host module handles which hostname(s)
+const hostModulesByHostname = {
+  'store.steampowered.com': [steamStore],
+  'steamcommunity.com': [steamCommunity],
+  'steamdb.info': [steamdb],
+  'astats.astats.nl': [astats],
+  'retroachievements.org': [retroachievements],
+  'completionist.me': [cme],
+  'completionist-web.test': [cme],
 }
 
-switch (url.hostname) {
-  case 'store.steampowered.com':
-    steamStore.inject(astats)
-    break
-  case 'steamcommunity.com':
-    steamCommunity.inject(astats)
-    break
-}
+// actions a host module runs on itself, unrelated to any provider
+const selfActions = new Map([
+  [astats, () => astats.enhance()],
+  [cme, () => cme.register('cme-steam')],
+])
 
-switch (url.hostname) {
-  case 'steamdb.info':
-    steamdb.inject(astats)
-    break
-}
+const providersByHost = new Map([
+  [steamStore, [astats, cme, exophase, mgs, steamhunters, ascouts]],
+  [steamCommunity, [astats, cme, exophase, mgs, steamhunters, ascouts]],
+  [steamdb, [astats, cme, exophase, mgs, steamhunters, ascouts]],
+  [astats, [cme, exophase, mgs, steamhunters, steamdb]],
+  [retroachievements, [cme]],
+  [cme, [ascouts]],
+])
 
-switch (url.hostname) {
-  case 'astats.astats.nl':
-    astats.inject(cme)
-    break
-}
-
-switch (url.hostname) {
-  case 'retroachievements.org':
-    retroachievements.inject(cme)
-    break
-}
-
-switch (url.hostname) {
-  case 'store.steampowered.com':
-    steamStore.inject(cme)
-    break
-  case 'steamcommunity.com':
-    steamCommunity.inject(cme)
-    break
-  case 'completionist-web.test':
-  case 'completionist.me':
-    cme.register('cme-steam')
-    break
-}
-
-switch (url.hostname) {
-  case 'steamdb.info':
-    steamdb.inject(cme)
-    break
-}
-
-switch (url.hostname) {
-  case 'astats.astats.nl':
-    astats.inject(exophase)
-    break
-}
-
-switch (url.hostname) {
-  case 'store.steampowered.com':
-    steamStore.inject(exophase)
-    break
-  case 'steamcommunity.com':
-    steamCommunity.inject(exophase)
-    break
-}
-
-switch (url.hostname) {
-  case 'steamdb.info':
-    steamdb.inject(exophase)
-    break
-}
-
-switch (url.hostname) {
-  case 'astats.astats.nl':
-    astats.inject(mgs)
-    break
-}
-
-switch (url.hostname) {
-  case 'store.steampowered.com':
-    steamStore.inject(mgs)
-    break
-  case 'steamcommunity.com':
-    steamCommunity.inject(mgs)
-    break
-}
-
-switch (url.hostname) {
-  case 'steamdb.info':
-    steamdb.inject(mgs)
-    break
-}
-
-switch (url.hostname) {
-  case 'astats.astats.nl':
-    astats.inject(steamhunters)
-    break
-}
-
-switch (url.hostname) {
-  case 'store.steampowered.com':
-    steamStore.inject(steamhunters)
-    break
-  case 'steamcommunity.com':
-    steamCommunity.inject(steamhunters)
-    break
-}
-
-switch (url.hostname) {
-  case 'steamdb.info':
-    steamdb.inject(steamhunters)
-    break
-}
-
-switch (url.hostname) {
-  case 'astats.astats.nl':
-    astats.inject(steamdb)
-    break
-}
-
-switch (url.hostname) {
-  case 'store.steampowered.com':
-    steamStore.inject(ascouts)
-    break
-  case 'steamcommunity.com':
-    steamCommunity.inject(ascouts)
-    break
-}
-
-switch (url.hostname) {
-  case 'steamdb.info':
-    steamdb.inject(ascouts)
-    break
-}
+const hosts = hostModulesByHostname[url.hostname] || []
+hosts.forEach(host => {
+  const selfAction = selfActions.get(host)
+  if (selfAction) {
+    selfAction()
+  }
+  const providers = providersByHost.get(host) || []
+  providers.forEach(provider => host.inject(provider))
+})
