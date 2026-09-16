@@ -2,7 +2,7 @@
 // @name         Trackers Everywhere***
 // @namespace    https://completionist.me/tools
 // @icon         https://completionist.me/images/completionist-logo-120.png
-// @version      2.60.0
+// @version      2.70.0
 // @description  Trackers Everywhere integration
 // @author       luchaos
 // @match        https://completionist.me/steam/*
@@ -24,7 +24,7 @@
 // ==/UserScript==
 
 'use strict'
-var version = '2.50.0'
+var version = '2.70.0'
 var url = new URL(window.location.href.toLowerCase())
 var fragment = url.pathname.match(/([^\/]*)\/*$/)[1]
 var fragments = url.pathname.split('/')
@@ -223,13 +223,12 @@ var steamCommunity = (function () {
     if (!steamAppLink) {
       return
     }
-    var providerLink = $('<a class="btnv6_blue_hoverfade btn_medium" style="margin-left: 3px" ' +
-      'href="' + steamAppLink + '" ' +
-      'title="View on ' + provider.name + '" target="_blank">' +
-      '<span data-tooltip-text="View on ' + provider.name + '">' +
-      '<img class="ico16" style="vertical-align:-10px;background: none;" src="' + provider.iconUrl + '">' +
-      '</span>' +
-      '</a>')
+    var providerLink = $('<a class="btnv6_blue_hoverfade btn_medium" style="margin-left: 3px; display: inline-flex; align-items: center; justify-content: center;" ' +
+      'href="' + steamAppLink +
+      '" title="View on ' + provider.name + '" target="_blank">' +
+      '<span data-tooltip-text="View on ' + provider.name + '" style="display:flex;align-items:center;">' +
+      '<img class="ico16" style="background: none;" src="' + provider.iconUrl + '">' +
+      '</span></a>')
     var linkContainer = $('.apphub_OtherSiteInfo .userscript')
     if (!linkContainer.length) {
       linkContainer = $('<span class="userscript"></span>')
@@ -1946,3 +1945,39 @@ hosts.forEach(host => {
   const providers = providersByHost.get(host) || []
   providers.forEach(provider => host.inject(provider))
 })
+
+
+// Fix apphub_OtherSiteInfo overlapping apphub_AppDetails in the Community Hub
+if (url.hostname === 'steamcommunity.com') {
+  $('head').append(
+    '<style>' +
+    '.apphub_HeaderTop .apphub_OtherSiteInfo {' +
+    '  position: static !important;' +
+    '  float: none !important;' +
+    '  display: flex !important;' +
+    '  flex-wrap: wrap !important;' +
+    '  justify-content: flex-end !important;' +
+    '  align-items: center !important;' +
+    '  width: 100% !important;' +
+    '  margin-top: 6px !important;' +
+    '  gap: 3px !important;' +
+    '}' +
+    '.apphub_OtherSiteInfo .userscript a:first-child {' +
+    '  margin-left: 0 !important;' +
+    '}' +
+    '</style>'
+  )
+
+  var repositionOtherSiteInfo = function () {
+    var $header = $('.apphub_HeaderTop')
+    var $other = $header.find('.apphub_OtherSiteInfo')
+    var $details = $header.find('.apphub_AppDetails')
+    if ($other.length && $details.length && !$other.prev().is($details)) {
+      $other.insertAfter($details)
+    }
+  }
+
+  repositionOtherSiteInfo()
+  new MutationObserver(repositionOtherSiteInfo)
+    .observe($('.apphub_HeaderTop')[0] || document.body, {childList: true, subtree: true})
+}
