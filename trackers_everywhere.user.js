@@ -2,7 +2,7 @@
 // @name         Trackers Everywhere***
 // @namespace    https://completionist.me/tools
 // @icon         https://completionist.me/images/completionist-logo-120.png
-// @version      2.70.0
+// @version      2.80.0
 // @description  Trackers Everywhere integration
 // @author       luchaos
 // @match        https://completionist.me/steam/*
@@ -24,7 +24,7 @@
 // ==/UserScript==
 
 'use strict'
-var version = '2.70.0'
+var version = '2.80.0'
 var url = new URL(window.location.href.toLowerCase())
 var fragment = url.pathname.match(/([^\/]*)\/*$/)[1]
 var fragments = url.pathname.split('/')
@@ -114,7 +114,11 @@ var steamStore = (function () {
       '</div>' +
       '<a class="name" href="' + steamAppLink + '" target="_blank">' + provider.name + '</a>' +
       '</div>'
-    $('.page_content > .rightcol.game_meta_data #achievement_block').append(providerLink)
+    $('.page_content > .rightcol.game_meta_data #achievement_block')
+      .filter(function() {
+        return $(this).children('.communitylink_achievement_images').length > 0;
+      })
+      .append(providerLink);
   }
 
   var injectAppsAnalyzer = function (provider) {
