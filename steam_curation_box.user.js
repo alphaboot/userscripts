@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         [Steam] AScouts Curations Box
-// @version      4.00
+// @version      4.02
 // @description  Creates a dropdown box to show curator content on Steam store pages
 // @author       alphabetsoup
 // @match        https://store.steampowered.com/app/*
@@ -44,21 +44,82 @@
   });
 
   GM_addStyle(`
-    .curator-dropdown {
+    #curatorControls {
       position: fixed;
       bottom: 10px;
       left: 10px;
-      padding: 10px;
       z-index: 1001;
+
+      display: flex;
+      flex-direction: row;
+      gap: 5px;
+
+      box-sizing: border-box;
+
+      width: var(--curator-sidebar-width);
+      min-width: 300px;
+    }
+
+    .curator-dropdown {
+      flex: 1 1 auto;
+      min-width: 0;
+
+      box-sizing: border-box;
+      height: 32px;
+      padding: 0 10px;
 
       background-color: #16202d;
       color: #c7d5e0;
       border: 1px solid #000000;
 
       cursor: pointer;
+    }
 
-      width: var(--curator-sidebar-width);
-      min-width: 300px;
+    #curatorToggleButton {
+      flex: 0 0 32px;
+
+      box-sizing: border-box;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+
+      background-color: #16202d;
+      color: #c7d5e0;
+      border: 1px solid #000000;
+
+      font-size: 14px;
+      line-height: 1;
+
+      cursor: pointer;
+    }
+
+    #curatorToggleButton:hover {
+      background-color: #2a475e;
+      color: #ffffff;
+    }
+
+    /* Mirrors an icon horizontally (inline-block is required for transforms) */
+    .curator-icon-flip {
+      display: inline-block;
+      transform: scaleX(-1);
+    }
+
+    /* Minimised: only the square button remains */
+    #curatorControls.minimized {
+      width: auto;
+      min-width: unset;
+    }
+
+    #curatorControls.minimized .curator-dropdown {
+      display: none;
+    }
+
+    #curatorControls.minimized #curatorToggleButton {
+      border: 1px dashed gray;
+    }
+
+    #curatorContentBox.minimized {
+      display: none;
     }
 
     #curatorContentBox {
@@ -221,6 +282,32 @@
     return button;
   }
 
+  // Minimised state lives at module level so it survives the content box being
+  // rebuilt every time a different curator is selected.
+  let isMinimized = false;
+  let controlsEl = null;
+  let toggleButtonEl = null;
+  const ICON_MINIMIZE = '<span class="curator-icon-flip">\u279C</span>';
+  const ICON_MAXIMIZE = "\u279C";
+
+  function setMinimized(minimized) {
+    isMinimized = minimized;
+
+    if (controlsEl) {
+      controlsEl.classList.toggle("minimized", minimized);
+    }
+
+    if (toggleButtonEl) {
+      toggleButtonEl.innerHTML = minimized ? ICON_MAXIMIZE : ICON_MINIMIZE;
+      toggleButtonEl.title = minimized ? "Maximise" : "Minimise";
+    }
+
+    const box = document.getElementById("curatorContentBox");
+    if (box) {
+      box.classList.toggle("minimized", minimized);
+    }
+  }
+
   function extractCurators(doc = document) {
     const curatorLinks = doc.querySelectorAll(
       '.steam_curators_block a[href*="/curator/"]',
@@ -362,6 +449,7 @@
     });
 
     if (curatorBox.children.length > 0) {
+      curatorBox.classList.toggle("minimized", isMinimized);
       document.body.appendChild(curatorBox);
     }
   }
@@ -426,7 +514,18 @@
       }
     });
 
-    document.body.appendChild(select);
+    // Square minimise / maximise button to the right of the dropdown
+    toggleButtonEl = document.createElement("button");
+    toggleButtonEl.id = "curatorToggleButton";
+    toggleButtonEl.addEventListener("click", () => setMinimized(!isMinimized));
+
+    controlsEl = document.createElement("div");
+    controlsEl.id = "curatorControls";
+    controlsEl.appendChild(select);
+    controlsEl.appendChild(toggleButtonEl);
+    document.body.appendChild(controlsEl);
+
+    setMinimized(isMinimized);
 
     const predefinedInExtracted = predefinedCurators.find((predefined) =>
       options.some((extracted) => extracted.id === predefined.id),
