@@ -2,7 +2,7 @@
 // @name         Trackers Everywhere+++
 // @namespace    https://completionist.me/tools
 // @icon         https://completionist.me/images/completionist-logo-120.png
-// @version      2.90.0
+// @version      3.00.0
 // @description  Trackers Everywhere integration
 // @author       luchaos
 // @match        https://completionist.me/steam/*
@@ -24,7 +24,7 @@
 // ==/UserScript==
 
 'use strict'
-var version = '2.90.0'
+var version = '3.00.0'
 var url = new URL(window.location.href.toLowerCase())
 var fragment = url.pathname.match(/([^\/]*)\/*$/)[1]
 var fragments = url.pathname.split('/')
@@ -1443,6 +1443,41 @@ const cme = function () {
     )
   }
 
+  const findNavSection = function (labels) {
+    for (const label of labels) {
+      const $navLabel = $('.nav-label').filter(function () {
+        return $(this).find('.menu-item-label').first().text().trim() === label
+      })
+      const $nav = $navLabel.nextAll('ul.nav').first()
+      if ($nav.length) {
+        return $nav
+      }
+    }
+    return $()
+  }
+
+  const insertAlphabetically = function ($nav, $newItem, newLabel) {
+    const $separator = $nav.find('li.p-2').first()
+    const $candidates = $separator.length ? $separator.nextAll('li') : $nav.find('li')
+
+    let $insertBefore = null
+    $candidates.each(function () {
+      const label = $(this).find('.menu-item-label').first().text().trim()
+      if (label && label.toLowerCase() > newLabel.toLowerCase()) {
+        $insertBefore = $(this)
+        return false // stop at first one that sorts after ours
+      }
+    })
+
+    if ($insertBefore) {
+      $insertBefore.before($newItem)
+    } else if ($separator.length) {
+      $separator.after($newItem)
+    } else {
+      $nav.append($newItem)
+    }
+  }
+
   const inject = function (provider) {
     const providerKey = provider.id + '-' + id
     if ($('head meta[content="' + providerKey + '"]').length) {
@@ -1470,14 +1505,12 @@ const cme = function () {
       '<span class="menu-item-label">' + provider.name + '</span>' +
       '</a></li>')
 
-    const $profilesNav = $('.nav-label')
-      .filter(function () {
-        return $(this).find('.menu-item-label').text().trim() === 'Profiles'
-      })
-      .nextAll('ul.nav')
-      .first()
+    const $nav = findNavSection(['Profiles', 'Game'])
+    if (!$nav.length) {
+      return
+    }
 
-    $profilesNav.append($newItem)
+    insertAlphabetically($nav, $newItem, provider.name)
 
     $('head').append('<meta name="userscript" content="' + providerKey + '">')
   }
