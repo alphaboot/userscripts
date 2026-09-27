@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Trackers Everywhere***
+// @name         Trackers Everywhere+++
 // @namespace    https://completionist.me/tools
 // @icon         https://completionist.me/images/completionist-logo-120.png
 // @version      2.90.0
