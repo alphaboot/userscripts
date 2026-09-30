@@ -2,7 +2,7 @@
 // @name         Trackers Everywhere+++
 // @namespace    https://completionist.me/tools
 // @icon         https://completionist.me/images/completionist-logo-120.png
-// @version      3.10.0
+// @version      3.11.0
 // @description  Trackers Everywhere integration
 // @author       luchaos
 // @match        https://completionist.me/steam/*
@@ -140,7 +140,7 @@ var steamStore = (function () {
           'style="text-decoration: none;">' +
             '<div class="icon">' +
               '<img class="category_icon" src="' + provider.iconUrl + '" alt="" ' +
-              'style="width: 16px; height: 16px; object-fit: contain;">' +
+              'style="object-fit: contain;">' +
             '</div>' +
             '<div class="label" style="text-decoration: none;">' + provider.name + '</div>' +
           '</a>'
