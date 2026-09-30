@@ -2,7 +2,7 @@
 // @name         Trackers Everywhere+++
 // @namespace    https://completionist.me/tools
 // @icon         https://completionist.me/images/completionist-logo-120.png
-// @version      3.20.0
+// @version      3.30.0
 // @description  Trackers Everywhere integration
 // @author       luchaos
 // @match        https://completionist.me/steam/*
@@ -107,29 +107,29 @@ var steamStore = (function () {
   var injectSidebarAchievements = function (provider) {
     var steamAppLink = provider.steamAppLink()
     if (!steamAppLink) return
-  
+
     var containerId = 'userscript-achievement-links'
     var rowId = containerId + '-' + provider.id
-  
+
     var tryInject = function () {
       // Already done? Skip all lookups.
       if (document.getElementById(rowId)) return true
-  
+
       var $target = $('[data-featuretarget="achievements"]').first()
       if (!$target.length) return false
-  
+
       var $box = $target.find('a[aria-label]').first().parent()
       if (!$box.length) {
         $box = $target.find('.noOpinionatedGlobalStyles > div').first()
       }
       if (!$box.length) return false
-  
+
       var $container = $('#' + containerId)
       if (!$container.length) {
         $container = $('<div>', { id: containerId }).css('display', 'block')
         $box.append($container)
       }
-  
+
       var $native = $('a.game_area_details_specs_ctn').first()
       var $row = $('<a>', {
         id: rowId,
@@ -145,25 +145,21 @@ var steamStore = (function () {
       // Set user-provided values as attributes/text, not HTML
       $row.find('img').attr('src', provider.iconUrl)
       $row.find('.label').text(provider.name)
-  
+
       var panel = $native.attr('data-panel')
       if (panel) $row.attr('data-panel', panel)
-  
+
       $container.append($row)
       return true
     }
-  
+
     if (tryInject()) return
-  
+
     // Watch only until injection succeeds, then disconnect
     var observer = new MutationObserver(function () {
       if (tryInject()) observer.disconnect()
     })
     observer.observe(document.body, { childList: true, subtree: true })
-  }
-
-    tryInject()
-    new MutationObserver(tryInject).observe(document.body, {childList: true, subtree: true})
   }
 
   var injectAppsAnalyzer = function (provider) {
