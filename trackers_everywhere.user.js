@@ -106,52 +106,61 @@ var steamStore = (function () {
   // NEW UPDATE 2026-09-30
   var injectSidebarAchievements = function (provider) {
     var steamAppLink = provider.steamAppLink()
-    if (!steamAppLink) {
-      return
-    }
-
+    if (!steamAppLink) return
+  
     var containerId = 'userscript-achievement-links'
     var rowId = containerId + '-' + provider.id
-
+  
     var tryInject = function () {
+      // Already done? Skip all lookups.
+      if (document.getElementById(rowId)) return true
+  
       var $target = $('[data-featuretarget="achievements"]').first()
-      if (!$target.length) {
-        return false
-      }
-
+      if (!$target.length) return false
+  
       var $box = $target.find('a[aria-label]').first().parent()
       if (!$box.length) {
         $box = $target.find('.noOpinionatedGlobalStyles > div').first()
       }
-      if (!$box.length) {
-        return false
-      }
-
+      if (!$box.length) return false
+  
       var $container = $('#' + containerId)
       if (!$container.length) {
-        $container = $('<div id="' + containerId + '" style="display: block;"></div>')
+        $container = $('<div>', { id: containerId }).css('display', 'block')
         $box.append($container)
       }
-
-      if (!$('#' + rowId).length) {
-        var $native = $('a.game_area_details_specs_ctn').first()
-        var $row = $(
-          '<a id="' + rowId + '" class="game_area_details_specs_ctn" href="' + steamAppLink + '" target="_blank" ' +
-          'style="text-decoration: none;">' +
-            '<div class="icon">' +
-              '<img class="category_icon" src="' + provider.iconUrl + '" alt="" ' +
-              'style="object-fit: contain;">' +
-            '</div>' +
-            '<div class="label" style="text-decoration: none;">' + provider.name + '</div>' +
-          '</a>'
-        )
-        if ($native.attr('data-panel')) {
-          $row.attr('data-panel', $native.attr('data-panel'))
-        }
-        $container.append($row)
-      }
+  
+      var $native = $('a.game_area_details_specs_ctn').first()
+      var $row = $('<a>', {
+        id: rowId,
+        'class': 'game_area_details_specs_ctn',
+        href: steamAppLink,
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        css: { textDecoration: 'none' },
+        html:
+          '<div class="icon"><img class="category_icon" alt="" style="object-fit: contain;"></div>' +
+          '<div class="label" style="text-decoration: none;"></div>'
+      })
+      // Set user-provided values as attributes/text, not HTML
+      $row.find('img').attr('src', provider.iconUrl)
+      $row.find('.label').text(provider.name)
+  
+      var panel = $native.attr('data-panel')
+      if (panel) $row.attr('data-panel', panel)
+  
+      $container.append($row)
       return true
     }
+  
+    if (tryInject()) return
+  
+    // Watch only until injection succeeds, then disconnect
+    var observer = new MutationObserver(function () {
+      if (tryInject()) observer.disconnect()
+    })
+    observer.observe(document.body, { childList: true, subtree: true })
+  }
 
     tryInject()
     new MutationObserver(tryInject).observe(document.body, {childList: true, subtree: true})
