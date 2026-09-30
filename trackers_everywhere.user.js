@@ -2,7 +2,7 @@
 // @name         Trackers Everywhere+++
 // @namespace    https://completionist.me/tools
 // @icon         https://completionist.me/images/completionist-logo-120.png
-// @version      3.11.0
+// @version      3.20.0
 // @description  Trackers Everywhere integration
 // @author       luchaos
 // @match        https://completionist.me/steam/*
