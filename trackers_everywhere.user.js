@@ -2,7 +2,7 @@
 // @name         Trackers Everywhere+++
 // @namespace    https://completionist.me/tools
 // @icon         https://completionist.me/images/completionist-logo-120.png
-// @version      3.00.0
+// @version      3.10.0
 // @description  Trackers Everywhere integration
 // @author       luchaos
 // @match        https://completionist.me/steam/*
@@ -24,7 +24,7 @@
 // ==/UserScript==
 
 'use strict'
-var version = '3.00.0'
+var version = (typeof GM_info !== 'undefined' && GM_info.script.version) || 'dev'
 var url = new URL(window.location.href.toLowerCase())
 var fragment = url.pathname.match(/([^\/]*)\/*$/)[1]
 var fragments = url.pathname.split('/')
@@ -103,22 +103,58 @@ var steamStore = (function () {
     $('.page_content > .rightcol.game_meta_data').prepend(rightColWidget)
   }
 
+  // NEW UPDATE 2026-09-30
   var injectSidebarAchievements = function (provider) {
     var steamAppLink = provider.steamAppLink()
     if (!steamAppLink) {
       return
     }
-    var providerLink = '<div class="game_area_details_specs">' +
-      '<div class="icon" style="padding-left: 10px">' +
-      '<a href="' + steamAppLink + '">' + provider.icon(16) + '</a>' +
-      '</div>' +
-      '<a class="name" href="' + steamAppLink + '" target="_blank">' + provider.name + '</a>' +
-      '</div>'
-    $('.page_content > .rightcol.game_meta_data #achievement_block')
-      .filter(function() {
-        return $(this).children('.communitylink_achievement_images').length > 0;
-      })
-      .append(providerLink);
+
+    var containerId = 'userscript-achievement-links'
+    var rowId = containerId + '-' + provider.id
+
+    var tryInject = function () {
+      var $target = $('[data-featuretarget="achievements"]').first()
+      if (!$target.length) {
+        return false
+      }
+
+      var $box = $target.find('a[aria-label]').first().parent()
+      if (!$box.length) {
+        $box = $target.find('.noOpinionatedGlobalStyles > div').first()
+      }
+      if (!$box.length) {
+        return false
+      }
+
+      var $container = $('#' + containerId)
+      if (!$container.length) {
+        $container = $('<div id="' + containerId + '" style="display: block;"></div>')
+        $box.append($container)
+      }
+
+      if (!$('#' + rowId).length) {
+        var $native = $('a.game_area_details_specs_ctn').first()
+        var $row = $(
+          '<a id="' + rowId + '" class="game_area_details_specs_ctn" href="' + steamAppLink + '" target="_blank" ' +
+          'style="text-decoration: none;">' +
+            '<div class="icon">' +
+              '<img class="category_icon" src="' + provider.iconUrl + '" alt="" ' +
+              'style="width: 16px; height: 16px; object-fit: contain;">' +
+            '</div>' +
+            '<div class="label" style="text-decoration: none;">' + provider.name + '</div>' +
+          '</a>'
+        )
+        if ($native.attr('data-panel')) {
+          $row.attr('data-panel', $native.attr('data-panel'))
+        }
+        $container.append($row)
+      }
+      return true
+    }
+
+    tryInject()
+    new MutationObserver(tryInject).observe(document.body, {childList: true, subtree: true})
   }
 
   var injectAppsAnalyzer = function (provider) {
