@@ -2,7 +2,7 @@
 // @name         Trackers Everywhere+++
 // @namespace    https://completionist.me/tools
 // @icon         https://completionist.me/images/completionist-logo-120.png
-// @version      3.40.0
+// @version      3.41.0
 // @description  Trackers Everywhere integration
 // @author       luchaos
 // @match        https://completionist.me/steam/*
@@ -2007,9 +2007,9 @@ const selfActions = new Map([
 ])
 
 const providersByHost = new Map([
-  [steamStore, [astats, cme, exophase, mgs, steamhunters, ascouts]],
-  [steamCommunity, [astats, cme, exophase, mgs, steamhunters, ascouts]],
-  [steamdb, [astats, cme, exophase, mgs, steamhunters, ascouts]],
+  [steamStore, [ascouts, astats, cme, exophase, mgs, steamhunters]],
+  [steamCommunity, [ascouts, astats, cme, exophase, mgs, steamhunters]],
+  [steamdb, [ascouts, astats, cme, exophase, mgs, steamhunters]],
   [astats, [cme, exophase, mgs, steamhunters, steamdb]],
   [retroachievements, [cme]],
   [cme, [ascouts]],
