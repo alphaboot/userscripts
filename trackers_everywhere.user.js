@@ -2,7 +2,7 @@
 // @name         Trackers Everywhere+++
 // @namespace    https://completionist.me/tools
 // @icon         https://completionist.me/images/completionist-logo-120.png
-// @version      3.30.0
+// @version      3.40.0
 // @description  Trackers Everywhere integration
 // @author       luchaos
 // @match        https://completionist.me/steam/*
@@ -2026,14 +2026,18 @@ hosts.forEach(host => {
 })
 
 // Fix apphub_OtherSiteInfo overlapping apphub_AppDetails in the Community Hub
+// horizontal
 if (url.hostname === 'steamcommunity.com') {
   $('head').append(
     '<style>' +
-    '.apphub_HeaderTop > .userscript {' +
+    '.apphub_HeaderTop {' +
     '  position: relative !important;' +
-    '  float: right !important;' +
-    '  clear: right !important;' +
+    '}' +
+    '.apphub_HeaderTop > .userscript {' +
+    '  position: absolute !important;' +
+    '  right: 0;' +
     '  margin-top: 3px !important;' +
+    '  z-index: 11;' +
     '}' +
     '.apphub_HeaderTop > .userscript a:first-child {' +
     '  margin-left: 0 !important;' +
@@ -2041,3 +2045,29 @@ if (url.hostname === 'steamcommunity.com') {
     '</style>'
   )
 }
+
+/*
+// vertical
+if (url.hostname === 'steamcommunity.com') {
+  $('head').append(
+    '<style>' +
+    '.apphub_HeaderTop {' +
+    '  position: relative !important;' +
+    '}' +
+    '.apphub_HeaderTop > .userscript {' +
+    '  position: absolute !important;' +
+    '  top: 12px;' +
+    '  right: -51px;' +
+    '  display: flex !important;' +
+    '  flex-direction: column;' +
+    '  align-items: flex-end;' +
+    '  gap: 4px;' +
+    '  z-index: 10;' +
+    '}' +
+    '.apphub_HeaderTop > .userscript a {' +
+    '  margin: 0 !important;' +
+    '}' +
+    '</style>'
+  )
+}
+*/
