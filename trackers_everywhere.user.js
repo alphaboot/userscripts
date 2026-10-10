@@ -2,7 +2,7 @@
 // @name         Trackers Everywhere+++
 // @namespace    https://completionist.me/tools
 // @icon         https://completionist.me/images/completionist-logo-120.png
-// @version      3.41.0
+// @version      3.41.1
 // @description  Trackers Everywhere integration
 // @author       luchaos
 // @match        https://completionist.me/steam/*
@@ -2041,6 +2041,9 @@ if (url.hostname === 'steamcommunity.com') {
     '}' +
     '.apphub_HeaderTop > .userscript a:first-child {' +
     '  margin-left: 0 !important;' +
+    '}' +
+    '.apphub_sectionTabs {' +
+    '  gap: 3px;' +
     '}' +
     '</style>'
   )
