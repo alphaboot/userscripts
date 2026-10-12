@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         [SH] Show AppIDs and SteamIDs
-// @version      2.2
+// @version      2.3
 // @description  Display AppID and SteamIDs on game and user pages
 // @author       alphabetsoup
 // @match        https://steamhunters.com/*
@@ -12,6 +12,15 @@
 
 (function() {
     'use strict';
+
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
 
     // Function to copy text to the clipboard
     function copyToClipboard(text) {
@@ -30,7 +39,8 @@
         // If no "Copied!" message exists, create one
         if (!copiedText) {
             copiedText = document.createElement('span');
-            copiedText.textContent = 'Copied!';
+            //copiedText.textContent = 'Copied!';
+            copiedText.textContent = '📋';
             copiedText.style.color = 'red';
             copiedText.style.marginLeft = '5px';
             copiedText.classList.add('copied-message');
@@ -52,16 +62,31 @@
         if (typeof sh !== 'undefined' && sh.model) {
             let infoHtml = '';
 
+            const GRID = 'display:grid; grid-template-columns:6ch 23ch 1fr; column-gap:2px; justify-content:start;';
+            const LABEL = 'text-align:right;';
+
             // Check and display appId if available
-            if (sh.model.app && sh.model.app.appId) {
-                const appId = sh.model.app.appId;
-                infoHtml += `<strong>AppID:</strong> <span class="clickable-id" data-id="${appId}">${appId}</span><br>`;
+            if (sh.model.app && sh.model.app.appId && sh.model.app.name) {
+                const appId = escapeHtml(sh.model.app.appId);
+                const appname = escapeHtml(sh.model.app.name);
+                infoHtml += `
+                    <div style="${GRID}">
+                        <strong style="${LABEL}">App</strong>
+                        <span><strong>ID:</strong> <span class="clickable-id" data-id="${appId}">${appId}</span></span>
+                        <span><strong>Name:</strong> <span class="clickable-id" data-id="${appname}">${appname}</span></span>
+                    </div>`;
             }
 
             // Check and display steamId if available
-            if (sh.model.steamUser && sh.model.steamUser.steamId) {
-                const steamId = sh.model.steamUser.steamId;
-                infoHtml += `<strong>SteamID:</strong> <span class="clickable-id" data-id="${steamId}">${steamId}</span><br>`;
+            if (sh.model.steamUser && sh.model.steamUser.steamId && sh.model.steamUser.name) {
+                const steamId = escapeHtml(sh.model.steamUser.steamId);
+                const steamname = escapeHtml(sh.model.steamUser.name);
+                infoHtml += `
+                    <div style="${GRID}">
+                        <strong style="${LABEL}">Steam</strong>
+                        <span><strong>ID:</strong> <span class="clickable-id" data-id="${steamId}">${steamId}</span></span>
+                        <span><strong>Name:</strong> <span class="clickable-id" data-id="${steamname}">${steamname}</span></span>
+                    </div>`;
             }
 
             // If we have any info to display, create a new div
