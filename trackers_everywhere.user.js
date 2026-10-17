@@ -2,7 +2,7 @@
 // @name         Trackers Everywhere+++
 // @namespace    https://completionist.me/tools
 // @icon         https://completionist.me/images/completionist-logo-120.png
-// @version      3.41.1
+// @version      3.50.0
 // @description  Trackers Everywhere integration
 // @author       luchaos
 // @match        https://completionist.me/steam/*
@@ -191,140 +191,219 @@ var steamCommunity = (function () {
   var id = 'steamcommunity'
   var name = 'Steam Community'
 
-  var profileId = typeof g_rgProfileData !== 'undefined' ? g_rgProfileData.steamid : false
-  if (profileId > 0 && !steam.isUserIstanceId(profileId)) {
-    var userInstanceProfileId = steam.userInstanceProfileId(profileId)
-    var message = '<div class="userscript-steamid-message" style="position: absolute; top: 30vh;left:0;right:0; background: rgba(0,0,0,0.7); z-index:999; color: white; text-align:center; padding: 50px 20px;">' +
-      '<p style="margin-bottom: 6px; color: orange; font-size: 20px"><b>Wrong Steam ID!</b></p>' +
-      '<p style="margin-bottom: 6px">' +
-      'Should be <code style="color: lightgreen; background: black">' + userInstanceProfileId + '</code> ' +
-      'instead of <code style="color: lightcoral;  background: black">' + profileId + '</code>' +
-      '</p>' +
-      '<p style="margin-bottom: 12px">' +
-      '<a style="color: lightblue; text-decoration: underline" href="https://steamcommunity.com/profiles/' + userInstanceProfileId + '">' +
-      'Go to the correct one' +
-      '</a>' +
-      '</p>' +
-      '<p style="margin-bottom: 6px; font-style: italic">' +
-      'Came here via Discord?<br>' +
-      '<a style="color: lightblue; font-style: italic; text-decoration: underline" href="https://github.com/discordapp/discord-api-docs/issues/271" target="_blank">See related issue</a>' +
-      '</p>' +
-      '</div>'
-    if (!$('body > .userscript-steamid-message').length) {
-      $('body').prepend(message)
-    }
-    profileId = userInstanceProfileId
-  }
+  var path = url.pathname
+  var USER = '(?:id|profiles)/[^/]+'
 
-  var isWorkshopItem = fragments[1] === 'sharedfiles' && fragments[2] === 'filedetails'
-  var fragment = fragments[1] === 'app' ? 'app' : (isWorkshopItem ? 'workshop' : fragment)
-  var resourceMap = {
-    'app': 'app',
-    'workshop': 'app',
-    'games': 'profile-apps',
-    'wishlist': 'profile-apps'
-  }
-  var resource = resourceMap[fragment] || 'profile'
-
-  var getWorkshopAppId = function () {
-    var href = $('.breadcrumbs a[href*="/app/"]').first().attr('href')
-    if (href) {
-      var m = href.match(/\/app\/(\d+)/)
+  // ---------------------------------------------------------------------------
+  // App/Profile ID lookup
+  // ---------------------------------------------------------------------------
+  var appIdFromPage = function () {
+    var selectors = ['.apphub_HeaderTop a[href*="/app/"]', '.breadcrumbs a[href*="/app/"]'] // User content pages (sharedfiles/filedetails/?id=)
+    for (var i = 0; i < selectors.length; i++) {
+      var m = ($(selectors[i]).first().attr('href') || '').match(/\/app\/(\d+)/)
       if (m) return m[1]
     }
     return null
   }
 
-  var inject = function (provider) {
-    var providerKey = provider.id + '-' + id
-    if ($('head meta[content="' + providerKey + '"]').length) {
-      return
-    }
-    provider.banner()
-    switch (resource) {
-      case 'app':
-        var communityAppId = isWorkshopItem ? getWorkshopAppId() : fragments[2]
-        if (!communityAppId) {
-          break
-        }
-        provider.params({appId: communityAppId})
-        injectHubHeaderAppLink(provider)
-        break
-      case 'profile':
-        provider.params({profileId: profileId})
-        injectProfileCountsLink(provider)
-        injectAppsAnalyzer(provider)
-        break
-      case 'profile-apps':
-        provider.params({profileId: profileId})
-        injectAppsListLinks(provider)
-        break
-    }
-    $('head').append('<meta name="userscript" content="' + providerKey + '">')
+  var getProfileId = function () {
+    if (typeof g_rgProfileData === 'undefined' || !(g_rgProfileData.steamid > 0)) return null
+    var profileId = g_rgProfileData.steamid
+    if (steam.isUserIstanceId(profileId)) return profileId
+    showWrongSteamIdMessage(profileId, steam.userInstanceProfileId(profileId))
+    return steam.userInstanceProfileId(profileId)
   }
 
-  var injectHubHeaderAppLink = function (provider) {
-    var steamAppLink = provider.steamAppLink()
-    if (!steamAppLink) {
-      return
-    }
-    var providerLink = $('<a class="btnv6_blue_hoverfade btn_medium" style="margin-left: 3px" ' +
-      'href="' + steamAppLink + '" ' +
-      'title="View on ' + provider.name + '" target="_blank">' +
-      '<span data-tooltip-text="View on ' + provider.name + '">' +
-      '<img class="ico16" style="vertical-align:-10px;background: none;" src="' + provider.iconUrl + '">' +
-      '</span>' +
-      '</a>')
-    var linkContainer = $('.apphub_HeaderTop > .userscript')
-    if (!linkContainer.length) {
-      linkContainer = $('<span class="userscript"></span>')
-      $('.apphub_HeaderTop > .apphub_AppDetails').after(linkContainer)
-      linkContainer = $('.apphub_HeaderTop > .userscript')
-    }
-    linkContainer.append(providerLink)
+  var showWrongSteamIdMessage = function (wrong, correct) {
+    if ($('body > .userscript-steamid-message').length) return
+    $('body').prepend(
+      '<div class="userscript-steamid-message" style="position:absolute;top:30vh;left:0;right:0;background:rgba(0,0,0,0.7);z-index:999;color:white;text-align:center;padding:50px 20px;">' +
+      '<p style="margin-bottom:6px;color:orange;font-size:20px"><b>Wrong Steam ID!</b></p>' +
+      '<p style="margin-bottom:6px">Should be <code style="color:lightgreen;background:black">' + correct + '</code> ' +
+      'instead of <code style="color:lightcoral;background:black">' + wrong + '</code></p>' +
+      '<p style="margin-bottom:12px"><a style="color:lightblue;text-decoration:underline" href="https://steamcommunity.com/profiles/' + correct + '">Go to the correct one</a></p>' +
+      '<p style="margin-bottom:6px;font-style:italic">Came here via Discord?<br>' +
+      '<a style="color:lightblue;font-style:italic;text-decoration:underline" href="https://github.com/discordapp/discord-api-docs/issues/271" target="_blank">See related issue</a></p>' +
+      '</div>')
   }
 
+  // ---------------------------------------------------------------------------
+  // Placement
+  // ---------------------------------------------------------------------------
+  // Community Hub / User Content (.apphub_AppDetails)
+  var hubPlacement = function (provider, href) {
+    var $container = $('.apphub_HeaderTop > .userscript')
+    if (!$container.length) {
+      $('.apphub_HeaderTop > .apphub_AppDetails').after('<span class="userscript"></span>')
+      $container = $('.apphub_HeaderTop > .userscript')
+    }
+    $container.append(
+      '<a class="btnv6_blue_hoverfade btn_medium" style="margin-left:3px" href="' + href + '" ' +
+      'title="View on ' + provider.name + '" target="_blank"><span>' +
+      '<img class="ico16" style="vertical-align:-10px;background:none" src="' + provider.iconUrl + '"></span></a>')
+  }
+
+  // Other App Pages
+  var legacyHeader = {
+    key: 'legacy',
+    selector: '.profile_small_header_texture',
+    iconSize: 16,
+    linkClass: 'btnv6_blue_hoverfade btn_medium',
+    css: 'top:12px;right:-60px;flex-direction:column;align-items:flex-end',
+  }
+  var reactAchievements = {
+    key: 'react-ach',
+    selector: 'div.HRBMC8-sveg-.Qhm6jOAQZog-',
+    iconSize: 18,
+    linkClass: 'userscript-btn',
+    css: 'top:8px;right:8px;flex-wrap:wrap;justify-content:flex-end;max-width:100%',
+  }
+  var reactWorkshop = {
+    key: 'react-workshop',
+    selector: 'div.EnFuoPFRUQw-.Psv8L3U3Y44-._0Yp9qPJ4rvQ-.sI7wun-GD7g-.Qhm6jOAQZog-',
+    iconSize: 18,
+    linkClass: 'userscript-btn',
+    css: 'top:0;right:102px;flex-wrap:wrap;justify-content:flex-end;max-width:100%',
+  }
+
+  var linkBoxPlacement = function (box) {
+    return function (provider, href) {
+      var styleId = 'userscript-style-' + box.key
+      if (!$('#' + styleId).length) {
+        $('head').append('<style id="' + styleId + '">' +
+          box.selector + '{position:relative}' +
+          '.userscript-box-' + box.key + '{position:absolute;z-index:10;display:flex;gap:4px;' + box.css + '}' +
+          '.userscript-box-' + box.key + ' a{margin:0}' +
+          '.userscript-btn{display:inline-flex;align-items:center;justify-content:center;width:54px;height:36px;' +
+          'box-sizing:border-box;flex:0 0 auto;border-radius:2px;line-height:1;background:rgba(103,193,245,.2);color:#67c1f5}' +
+          '</style>')
+      }
+      var marker = 'userscript-link-' + provider.id
+
+      var add = function () {
+        $(box.selector).each(function () {
+          var $host = $(this)
+          if ($host.find('.' + marker).length) return
+          var $box = $host.children('.userscript-box-' + box.key)
+          if (!$box.length) {
+            $box = $('<span class="userscript-box-' + box.key + '"></span>').appendTo($host)
+          }
+          $box.append('<a class="' + box.linkClass + ' ' + marker + '" href="' + href + '" ' +
+            'title="View on ' + provider.name + '" target="_blank"><span>' + provider.icon(box.iconSize) + '</span></a>')
+        })
+      }
+
+      add()
+      // React pages render late and re-render, so keep watching
+      new MutationObserver(add).observe(document.body, {childList: true, subtree: true})
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Profile Page Extras (only on the main profile page)
+  // ---------------------------------------------------------------------------
   var injectProfileCountsLink = function (provider) {
-    var linkContainer = $('<div class="profile_count_link"></div>')
-    var providerLink = $('<a class="" target="_blank" href="' + provider.steamProfileLink() + '" style="display: block;"><span class="count_link_label">' + provider.name + ' <span class="profile_count_link_total">' + provider.icon(20) + '</span></span></a>')
-    linkContainer.append(providerLink)
-    $('.profile_item_links').append(linkContainer)
+    $('.profile_item_links').append(
+      '<div class="profile_count_link"><a target="_blank" href="' + provider.steamProfileLink() + '" style="display:block">' +
+      '<span class="count_link_label">' + provider.name + ' <span class="profile_count_link_total">' + provider.icon(20) + '</span></span></a></div>')
   }
 
-  var injectAppsListLinks = function (provider) {
-    var steamAppLink = provider.steamAppLink()
-    if (!steamAppLink) {
-      return
-    }
-    $('.gameListRow, .wishlist_row').each(function () {
-      var appUrl = new URL($('a.pullup_item', this).attr('href'))
-      var appId = appUrl.pathname.match(/([^\/]*)\/*$/)[1]
-      var providerLink = $('<a class="pullup_item" target="_blank" style="padding-bottom: 4px" href="' + provider.steamAppLink(appId, profileId) + '"><div class="menu_ico" style="padding: 0 7px 0 6px">' + provider.icon(16) + '</div>' + provider.name + '</a>')
-      $('.bottom_controls', this).append(providerLink)
-    })
+  var injectAppsAnalyzer = function (provider, profileId) {
+    if (provider.id !== 'cme') return
+    var games = window.eval('window.g_rgAchievementShowcaseGamesWithAchievements')
+    if (!games) return
+    var ids = games.map(function (app) { return app.appid }).sort(function (a, b) { return a - b })
+    var $form = $('<form class="content" action="https://completionist.me/steam/recover/profile" method="post" target="_blank"></form>')
+    $form.append($('<input type="hidden" name="app_ids" readonly>').val(ids.join(',')))
+    $form.append($('<input type="hidden" name="profile_id" readonly>').val(profileId))
+    $form.append('<button type="submit" class="btn_grey_white_innerfade btn_small" style="width:100%"><span>Check ' + ids.length + ' apps on completionist.me</span></button>')
+    $('<div class="rightbox" style="margin-top:20px"><div class="rightbox_content_header">' + provider.icon(22) + ' completionist.me Apps Analyzer</div></div>')
+      .append($form)
+      .appendTo('.rightcol')
   }
 
-  var injectAppsAnalyzer = function (provider) {
-    if (provider.id !== 'cme') {
+  // ---------------------------------------------------------------------------
+  // Routes: the ONLY pages this module runs on. First match wins.
+  //   pattern  - tested against the (lowercased) pathname
+  //   resolve  - returns {appId} or {profileId} (+ anything else), or null to skip
+  //   link     - the provider's URL for this page type; if it returns null the provider
+  //              doesn't support this page (e.g. mgs has no app links) and is skipped
+  //   run      - injects links for the provider
+  // Add new pages by adding a route here.
+  // ---------------------------------------------------------------------------
+  var appRoute = function (pattern, placement) {
+    return {
+      pattern: pattern,
+      resolve: function (m) { return m[1] ? {appId: m[1]} : null },
+      link: function (provider) { return provider.steamAppLink() },
+      run: function (provider, ctx, href) { placement(provider, href) },
+    }
+  }
+
+  var routes = [
+    // Profile: /id/<name> or /profiles/<steamid64>
+    {
+      pattern: new RegExp('^/' + USER + '/?$'),
+      resolve: function () {
+        var profileId = getProfileId()
+        return profileId ? {profileId: profileId} : null
+      },
+      link: function (provider) { return provider.steamProfileLink() },
+      run: function (provider, ctx) {
+        injectProfileCountsLink(provider)
+        injectAppsAnalyzer(provider, ctx.profileId)
+      },
+    },
+
+    // User content: /sharedfiles/filedetails/?id=<fileid> -> appid is read from the page
+    {
+      pattern: /^\/sharedfiles\/filedetails\/?$/,
+      resolve: function () {
+        if (!url.searchParams.get('id')) return null
+        var appId = appIdFromPage()
+        return appId ? {appId: appId} : null
+      },
+      link: function (provider) { return provider.steamAppLink() },
+      run: function (provider, ctx, href) { hubPlacement(provider, href) },
+    },
+
+    // Legacy custom pages with a small profile header
+    appRoute(new RegExp('^/' + USER + '/stats/(\\d+)'), linkBoxPlacement(legacyHeader)),
+    appRoute(new RegExp('^/' + USER + '/friendsthatplay/(\\d+)'), linkBoxPlacement(legacyHeader)),
+
+    // New React pages
+    appRoute(new RegExp('^/(?:' + USER + '/)?achievements/(\\d+)'), linkBoxPlacement(reactAchievements)),
+    appRoute(/^\/app\/(\d+)\/workshop(?:\/|$)/, linkBoxPlacement(reactWorkshop)),
+
+    // Community hub: /app/<appid> and its other sub-pages. Must stay AFTER /workshop above.
+    appRoute(/^\/app\/(\d+)/, hubPlacement),
+  ]
+
+  // ---------------------------------------------------------------------------
+  // Entry point
+  // ---------------------------------------------------------------------------
+
+  var inject = function (provider) {
+    for (var i = 0; i < routes.length; i++) {
+      var route = routes[i]
+      var m = path.match(route.pattern)
+      if (!m) continue
+
+      var ctx = route.resolve(m)
+      if (!ctx) return // right page, but no id found: do nothing
+
+      var providerKey = provider.id + '-' + id
+      if ($('head meta[content="' + providerKey + '"]').length) return
+
+      provider.params(ctx)
+      var href = route.link(provider)
+      if (!href) return // provider has no link for this kind of page
+
+      provider.banner()
+      route.run(provider, ctx, href)
+      $('head').append('<meta name="userscript" content="' + providerKey + '">')
       return
     }
-    var g_rgAchievementShowcaseGamesWithAchievements = window.eval('window.g_rgAchievementShowcaseGamesWithAchievements')
-    if (!g_rgAchievementShowcaseGamesWithAchievements) {
-      return
-    }
-    var ids = g_rgAchievementShowcaseGamesWithAchievements.map(function (app) {
-      return app.appid
-    }).sort(function (a, b) {
-      return a - b
-    })
-    var content = $('<form class="content" action="https://completionist.me/steam/recover/profile" method="post" target="_blank"></form>')
-    content.append($('<input type="hidden" name="app_ids" value="' + ids.join(',') + '" readonly>'))
-    content.append($('<input type="hidden" name="profile_id" value="' + profileId + '" readonly>'))
-    var submitButton = $('<button type="submit" class="btn_grey_white_innerfade btn_small" style="width: 100%"><span>Check ' + ids.length + ' apps on completionist.me</span></button>')
-    content.append(submitButton)
-    var analyzer = $('<div class="rightbox" style="margin-top:20px"><div class="rightbox_content_header">' + provider.icon(22) + ' completionist.me Apps Analyzer</div></div>')
-    analyzer.append(content)
-    $('.rightcol').append(analyzer)
   }
 
   return {
