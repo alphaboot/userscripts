@@ -2,7 +2,7 @@
 // @name         Trackers Everywhere+++
 // @namespace    https://completionist.me/tools
 // @icon         https://completionist.me/images/completionist-logo-120.png
-// @version      3.50.1
+// @version      3.50.2
 // @description  Trackers Everywhere integration
 // @author       luchaos
 // @match        https://completionist.me/steam/*
@@ -371,6 +371,7 @@ var steamCommunity = (function () {
     appRoute(new RegExp('^/' + USER + '/stats/(\\d+)'), linkBoxPlacement(legacyHeader)),
     appRoute(new RegExp('^/stats/(\\d+)'), linkBoxPlacement(legacyHeader)),
     appRoute(new RegExp('^/' + USER + '/friendsthatplay/(\\d+)'), linkBoxPlacement(legacyHeader)),
+    appRoute(new RegExp('^/' + USER + '/recommended/(\\d+)'), linkBoxPlacement(legacyHeader)),
 
     // New React pages
     appRoute(new RegExp('^/(?:' + USER + '/)?achievements/(\\d+)'), linkBoxPlacement(reactAchievements)),
